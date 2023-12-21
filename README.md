@@ -19,3 +19,9 @@ This is a web API project for a simplified version of BookMyShow, a platform for
 - Customers can browse and view the list of available events.
 - They can book tickets for events they are interested in attending.
 
+## Tech Stack 🛠️
+ 
+- ASP.NET Core Web API
+- Entity Framework Core
+- C#
+- Swagger for API documentation
