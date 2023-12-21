@@ -6,7 +6,8 @@ namespace BookMyShow.Business
 {
     public interface IAuthenticationBusiness
     {
-        Task<bool> Register(IdentityUser identityUser, RegisterModel model);
+        Task<bool> AddUser(AddUserModel model);
+        Task<bool> Register(RegisterModel model);
         Task<bool> Login(LoginModel loginModel);
         Task<bool> Logout();
     }

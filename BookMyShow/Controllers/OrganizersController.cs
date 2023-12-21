@@ -1,6 +1,7 @@
 ﻿using BookMyShow.Business;
 using BookMyShow.Business.BusinessInterfaces;
 using BookMyShow.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +19,7 @@ namespace BookMyShow.Controllers
 
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult Get(string id)
         {
             if (id == null)

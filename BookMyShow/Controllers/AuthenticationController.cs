@@ -1,5 +1,6 @@
 ﻿using BookMyShow.Business;
 using BookMyShow.Models.ViewsModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,23 @@ namespace BookMyShow.Controllers
             _accountBusiness = accountBusiness;
         }
 
+
+        [HttpPost]
+        [Authorize(Roles ="Admin")]
+        public async Task<IActionResult> Users([FromBody] AddUserModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var result = await _accountBusiness.AddUser(model);
+            if (result)
+            {
+                return Ok("Account created successfully.");
+            }
+            return StatusCode(StatusCodes.Status400BadRequest, "User already exists");
+        }
+
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
@@ -24,8 +42,7 @@ namespace BookMyShow.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var identityUser = new IdentityUser { UserName = model.Username, Email = model.Email };
-            var result = await _accountBusiness.Register(identityUser, model);
+            var result = await _accountBusiness.Register(model);
             if (result)
             {
                 return Ok("Account created successfully.");

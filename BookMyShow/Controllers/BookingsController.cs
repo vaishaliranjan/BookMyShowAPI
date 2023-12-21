@@ -1,6 +1,7 @@
 ﻿using BookMyShow.Business;
 using BookMyShow.Business.BusinessInterfaces;
 using BookMyShow.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,6 +21,7 @@ namespace BookMyShow.Controllers
 
 
         [HttpGet]
+        [Authorize(Roles = "Admin,Customer")]
         public IActionResult Get(int? id, string userId)
         {
             //admin viewing bookings
@@ -57,6 +59,7 @@ namespace BookMyShow.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Customer")]
         public IActionResult Post([FromBody] Booking booking)
         {
             if (!ModelState.IsValid)

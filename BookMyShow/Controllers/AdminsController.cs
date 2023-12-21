@@ -34,6 +34,7 @@ namespace BookMyShow.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(string id)
         {
             var result = _adminBusiness.DeleteAdmin(id);

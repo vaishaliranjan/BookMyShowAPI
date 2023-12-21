@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
 namespace BookMyShow.Models.ViewsModel
 {
-    public class RegisterModel
+    public class AddUserModel
     {
         [Required]
         public string Name { get; set; }
@@ -14,15 +13,13 @@ namespace BookMyShow.Models.ViewsModel
         public string Email { get; set; }
         [Required]
         [DataType(DataType.Password)]
-        
+
         public string Password { get; set; }
         [Required]
         [DataType(DataType.Password)]
-        [Compare("Password", ErrorMessage ="Password and confirmation password do not match.")]
-        public string ConfirmPassword { get; set;}
-
-        [JsonIgnore]
+        [Compare("Password", ErrorMessage = "Password and confirmation password do not match.")]
+        public string ConfirmPassword { get; set; }
+        [Required]
         public string RoleId { get; set; }
-
     }
 }

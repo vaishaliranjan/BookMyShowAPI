@@ -1,6 +1,7 @@
 ﻿using BookMyShow.Business;
 using BookMyShow.Business.BusinessInterfaces;
 using BookMyShow.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +18,7 @@ namespace BookMyShow.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin,Organizer")]
         public IActionResult Get(int? id)
         {
             if (id == null)
@@ -32,6 +34,7 @@ namespace BookMyShow.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult Post([FromBody] Venue venue)
         {
             if (!ModelState.IsValid)

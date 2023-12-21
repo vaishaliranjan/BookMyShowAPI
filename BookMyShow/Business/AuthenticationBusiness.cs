@@ -18,10 +18,10 @@ namespace BookMyShow.Business
             _signInManager = signInManager;
             _appDbContext = appDbContext;
         }
-
-        public async Task<bool> Register(IdentityUser identityUser, RegisterModel model )
+        public async Task<bool> AddUser(AddUserModel model)
         {
-            var result = await _userManager.CreateAsync(identityUser,model.Password);
+            var identityUser = new IdentityUser { UserName = model.Username, Email = model.Email };
+            var result = await _userManager.CreateAsync(identityUser, model.Password);
 
             Role role;
             if (model.RoleId == "1")
@@ -44,6 +44,31 @@ namespace BookMyShow.Business
             {
                 return false;
             }
+            if (result.Succeeded)
+            {
+                var user = new User()
+                {
+                    IdentityUserId = identityUser.Id,
+                    Email = model.Email,
+                    Role = role,
+                    Username = model.Username,
+                    Name = model.Name
+                };
+                _appDbContext.Users.Add(user);
+                _appDbContext.SaveChanges();
+                return true;
+
+            }
+            return false;
+        }
+        public async Task<bool> Register( RegisterModel model )
+        {
+            var identityUser = new IdentityUser { UserName = model.Username, Email = model.Email };
+            var result = await _userManager.CreateAsync(identityUser,model.Password);
+
+            Role role= Role.Customer;
+            await _userManager.AddToRoleAsync(identityUser, "Customer");
+            
             if (result.Succeeded)
             {
                 var user = new User()

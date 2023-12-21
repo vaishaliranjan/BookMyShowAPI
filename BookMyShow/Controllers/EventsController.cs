@@ -1,6 +1,7 @@
 ﻿using BookMyShow.Business;
 using BookMyShow.Business.BusinessInterfaces;
 using BookMyShow.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Web;
@@ -23,6 +24,7 @@ namespace BookMyShow.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin,Organizer")]
         public IActionResult Get(int? id, string userId)
         {
             //admin viewing events
@@ -59,6 +61,7 @@ namespace BookMyShow.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Organizer")]
         public IActionResult Post([FromBody] Event e)
         {
             if (!ModelState.IsValid)
@@ -82,6 +85,7 @@ namespace BookMyShow.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Admin,Organizer")]
         public IActionResult Delete(int id, string organizerId)
         {
             var e= _eventBusiness.GetEvent(id);
