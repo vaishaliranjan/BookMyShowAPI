@@ -7,6 +7,7 @@ This is a web API project for a simplified version of BookMyShow, a platform for
 ### Admin 👩‍💼
 - Admin users have the authority to manage various aspects of the application.
 - They can view and manage the list of all admins.
+- They can add new admins, customers and organizers.
 - Admins can also perform operations such as adding, or removing admins.
 
 ### Organizer 🧑‍🎤
