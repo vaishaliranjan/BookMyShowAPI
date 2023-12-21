@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BookMyShow.Migrations
 {
-    public partial class Model1 : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,7 +14,8 @@ namespace BookMyShow.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: true),
-                    Timing = table.Column<DateTime>(nullable: false)
+                    Timing = table.Column<string>(nullable: true),
+                    IsBooked = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -66,7 +67,8 @@ namespace BookMyShow.Migrations
                 {
                     VenueId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Place = table.Column<int>(nullable: false)
+                    Place = table.Column<string>(nullable: true),
+                    IsBooked = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -184,6 +186,9 @@ namespace BookMyShow.Migrations
                 columns: table => new
                 {
                     IdentityUserId = table.Column<string>(nullable: false),
+                    Email = table.Column<string>(nullable: true),
+                    Role = table.Column<int>(nullable: false),
+                    Username = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -209,7 +214,7 @@ namespace BookMyShow.Migrations
                     InitialTickets = table.Column<int>(nullable: false),
                     NumberOfTickets = table.Column<int>(nullable: false),
                     Price = table.Column<double>(nullable: false),
-                    OrganizerId = table.Column<string>(nullable: true)
+                    UserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -221,8 +226,8 @@ namespace BookMyShow.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Events_Users_OrganizerId",
-                        column: x => x.OrganizerId,
+                        name: "FK_Events_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "IdentityUserId",
                         onDelete: ReferentialAction.Restrict);
@@ -241,7 +246,7 @@ namespace BookMyShow.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     EventId = table.Column<int>(nullable: false),
-                    CustomerId = table.Column<string>(nullable: true),
+                    UserId = table.Column<string>(nullable: true),
                     NumberOfTickets = table.Column<int>(nullable: false),
                     TotalPrice = table.Column<double>(nullable: false)
                 },
@@ -249,17 +254,17 @@ namespace BookMyShow.Migrations
                 {
                     table.PrimaryKey("PK_Bookings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Bookings_Users_CustomerId",
-                        column: x => x.CustomerId,
-                        principalTable: "Users",
-                        principalColumn: "IdentityUserId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_Bookings_Events_EventId",
                         column: x => x.EventId,
                         principalTable: "Events",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Bookings_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "IdentityUserId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -302,14 +307,14 @@ namespace BookMyShow.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bookings_CustomerId",
-                table: "Bookings",
-                column: "CustomerId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Bookings_EventId",
                 table: "Bookings",
                 column: "EventId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bookings_UserId",
+                table: "Bookings",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Events_ArtistId",
@@ -317,9 +322,9 @@ namespace BookMyShow.Migrations
                 column: "ArtistId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Events_OrganizerId",
+                name: "IX_Events_UserId",
                 table: "Events",
-                column: "OrganizerId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Events_VenueId",

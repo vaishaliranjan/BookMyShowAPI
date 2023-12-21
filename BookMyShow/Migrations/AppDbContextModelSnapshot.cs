@@ -26,11 +26,14 @@ namespace BookMyShow.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<bool>("IsBooked")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("Timing")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("Timing")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -115,7 +118,7 @@ namespace BookMyShow.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RoleId")
+                    b.Property<int>("Role")
                         .HasColumnType("int");
 
                     b.Property<string>("Username")
@@ -133,8 +136,11 @@ namespace BookMyShow.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("Place")
-                        .HasColumnType("int");
+                    b.Property<bool>("IsBooked")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Place")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("VenueId");
 

@@ -3,6 +3,8 @@
     public class Venue
     {
         public int VenueId { get; set; }
-        public int Place { get; set; }
+        public string Place { get; set; }
+        public bool IsBooked { get; set; }
+
     }
 }
