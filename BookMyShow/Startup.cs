@@ -1,6 +1,8 @@
 using BookMyShow.Business;
 using BookMyShow.Business.BusinessInterfaces;
 using BookMyShow.Data;
+using BookMyShow.Repository;
+using BookMyShow.Repository.IRepository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -56,6 +58,11 @@ namespace BookMyShow
             services.AddScoped<IEventBusiness,EventBusiness>();
             services.AddScoped<IOrganizerBusiness,OrganizerBusiness>();
             services.AddScoped<IVenueBusiness, VenueBusiness>();
+            services.AddScoped<IArtistRepository, ArtistRepository>();
+            services.AddScoped<IBookingRepository,BookingRepository>();
+            services.AddScoped<IEventRepository, EventRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IVenueRepository, VenueRespository>();
             services.AddSwaggerGen();
             services.AddSwaggerGen(c =>
             {

@@ -1,6 +1,7 @@
 ﻿using BookMyShow.Business.BusinessInterfaces;
 using BookMyShow.Data;
 using BookMyShow.Models;
+using BookMyShow.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,14 @@ namespace BookMyShow.Business
 {
     public class BookingBusiness : IBookingBusiness
     {
-        private AppDbContext _appDbContext;
-        public BookingBusiness(AppDbContext appDbContext)
+        private readonly IBookingRepository bookingRepository;
+        private readonly IUserRepository userRepository;
+        public BookingBusiness(IBookingRepository bookingRepository, IUserRepository userRepository)
         {
-            _appDbContext = appDbContext;
+            this.bookingRepository = bookingRepository;
+            this.userRepository = userRepository;
         }
-        [HttpPost]
+
         public bool CreateBooking(Booking booking, Event e )
         {
             if (booking.NumberOfTickets<=0 || booking.NumberOfTickets>e.NumberOfTickets)
@@ -22,13 +25,12 @@ namespace BookMyShow.Business
                 return false;
             }
             booking.TotalPrice = e.Price * booking.NumberOfTickets;
-            _appDbContext.Bookings.Add(booking);    
-            _appDbContext.SaveChanges();
+            bookingRepository.AddBooking(booking);
             return true;
         }
         public List<Booking> GetAllBookings(string customerId = null)
         {
-            var bookings = _appDbContext.Bookings.ToList();
+            var bookings = bookingRepository.GetAllBookings();
             if (customerId == null)
             {
                 return bookings;
@@ -40,7 +42,8 @@ namespace BookMyShow.Business
 
         public Booking GetBooking(int? id, string customerId = null)
         {
-            var booking = _appDbContext.Bookings.Find(id);
+            var bookings = GetAllBookings();
+            var booking = bookings.FirstOrDefault(b => b.Id == id);
             if (booking == null)
             {
                 return null;
@@ -49,7 +52,9 @@ namespace BookMyShow.Business
             {
                 return booking;
             }
-            var user = _appDbContext.Users.Find(customerId);
+
+            var users = userRepository.GetAllUsers();
+            var user = users.FirstOrDefault(u=>u.IdentityUserId == customerId);
             if (user == null || user.IdentityUserId != customerId)
             {
                 return null;

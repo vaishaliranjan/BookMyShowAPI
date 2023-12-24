@@ -1,6 +1,7 @@
 ﻿using BookMyShow.Business.BusinessInterfaces;
 using BookMyShow.Data;
 using BookMyShow.Models;
+using BookMyShow.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Collections.Generic;
@@ -11,12 +12,12 @@ namespace BookMyShow.Business
 {
     public class ArtistBusiness: IArtistBusiness
     {
-        private AppDbContext _appcontext;
-        public ArtistBusiness(AppDbContext appDbContext)
+        private readonly IArtistRepository artistRepository;
+        public ArtistBusiness(IArtistRepository artistRepository)
         {
-            _appcontext = appDbContext;
+            this.artistRepository = artistRepository;
         }
-        
+
         public bool CreateArtist(Artist artist)
         {
             DateTime timing;
@@ -26,44 +27,44 @@ namespace BookMyShow.Business
             {
                 return false;
             }
-            _appcontext.Artists.Add(artist);
-            _appcontext.SaveChanges();
+            artistRepository.AddArtist(artist);
             return true;
         }
 
         public List<Artist> GetAllArtists()
         {
-            return _appcontext.Artists.ToList();
+            return artistRepository.GetAllArtists();
         }
 
         public Artist GetArtist(int? id)
         {
-            var artist = _appcontext.Artists.Find(id);
+            var artists = GetAllArtists();
+            var artist = artists.FirstOrDefault(a => a.Id == id);
             return artist;
         }
         
 
         public bool BookArtist(int id)
         {
-            var artist = _appcontext.Artists.FirstOrDefault(a=>a.Id==id);
+            var artist = GetArtist(id);
             if(artist == null || artist.IsBooked==true)
             {
                 return false;
             }
             artist.IsBooked = true;
-            _appcontext.SaveChanges();
+            artistRepository.UpdateArtist(artist);
             return true;
         }
 
         public bool UnBookArtist(int id)
         {
-            var artist = _appcontext.Artists.FirstOrDefault(a => a.Id == id);
+            var artist = GetArtist(id);
             if (artist == null)
             {
                 return false;
             }
             artist.IsBooked = false;
-            _appcontext.SaveChanges();
+            artistRepository.UpdateArtist(artist);
             return true;
         }
     }

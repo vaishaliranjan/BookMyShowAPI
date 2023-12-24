@@ -1,6 +1,7 @@
 ﻿using BookMyShow.Business.BusinessInterfaces;
 using BookMyShow.Data;
 using BookMyShow.Models;
+using BookMyShow.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,29 +11,34 @@ namespace BookMyShow.Business
 {
     public class EventBusiness : IEventBusiness
     {
-        private AppDbContext _appDbContext;
-        public EventBusiness(AppDbContext appDbContext)
+        private readonly IEventRepository eventRepository;
+        private readonly IUserRepository userRepository;
+        public EventBusiness(IEventRepository eventRepository, IUserRepository userRepository)
         {
-            _appDbContext = appDbContext;
+            this.eventRepository = eventRepository;
+            this.userRepository = userRepository;
         }
- 
+
 
         public void CreateEvent(Event e)
-        {     
-                _appDbContext.Events.Add(e);
-                _appDbContext.SaveChanges();          
+        {
+            eventRepository.AddEvent(e);       
         }
 
-        public void DecrementTicket(int id,int numberOfTickets)
+        public bool DecrementTicket(int id,int numberOfTickets)
         {
-            var e= _appDbContext.Events.FirstOrDefault(e => e.Id == id);
-            e.NumberOfTickets -= numberOfTickets;
-            _appDbContext.SaveChanges();
+            var e= GetEvent(id);
+            if (e != null)
+            {
+                return false;
+            }
+            eventRepository.UpdateEvent(e);
+            return true;
         }
 
         public bool DeleteEvent(int id, string organizerId = null)
         {
-            var e= _appDbContext.Events.FirstOrDefault(e=>e.Id==id);
+            var e = GetEvent(id);
             //check if same organizer
             if (e.InitialTickets != e.NumberOfTickets)
             {
@@ -44,23 +50,21 @@ namespace BookMyShow.Business
             }
             if (organizerId == null)
             {
-                _appDbContext.Events.Remove(e);
-                _appDbContext.SaveChanges();
+                eventRepository.RemoveEvent(e);
                 return true;
             }
             if (organizerId != e.UserId)
             {
                 return false;
             }
-            _appDbContext.Events.Remove(e);
-            _appDbContext.SaveChanges();
+            eventRepository.RemoveEvent(e);
             return true;
 
         }
 
         public List<Event> GetAllEvents(string organizerId=null)
         {
-            var events = _appDbContext.Events.ToList();
+            var events = eventRepository.GetAllEvents();
             if (organizerId == null)
             {
                 return events;
@@ -72,7 +76,8 @@ namespace BookMyShow.Business
 
         public Event GetEvent(int? id, string userId=null)
         {
-            var eventChoosen = _appDbContext.Events.Find(id);
+            var events = GetAllEvents(userId);
+            var eventChoosen = events.FirstOrDefault(e => e.Id == id);
             if (eventChoosen == null)
             {
                 return null;
@@ -81,12 +86,14 @@ namespace BookMyShow.Business
             {
                 return eventChoosen;
             }
-            var user = _appDbContext.Users.Find(userId);
+            var users= userRepository.GetAllUsers();
+            var user = users.FirstOrDefault(u=> u.IdentityUserId==userId);
             if(user == null || user.IdentityUserId !=userId)
             {
                 return null;
             }
             return eventChoosen;
         }
+
     }
 }

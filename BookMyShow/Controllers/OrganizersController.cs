@@ -4,6 +4,7 @@ using BookMyShow.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace BookMyShow.Controllers
 {
@@ -22,16 +23,23 @@ namespace BookMyShow.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult Get(string id)
         {
-            if (id == null)
+            try
             {
-                return Ok(_organizerBusiness.GetAllOrganizers());
+                if (id == null)
+                {
+                    return Ok(_organizerBusiness.GetAllOrganizers());
+                }
+                var organizer = _organizerBusiness.GetOrganizer(id);
+                if (organizer == null)
+                {
+                    return NotFound("Organizer not found!");
+                }
+                return Ok(organizer);
             }
-            var organizer = _organizerBusiness.GetOrganizer(id);
-            if (organizer == null)
+            catch (Exception ex)
             {
-                return NotFound("Organizer not found!");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-            return Ok(organizer);
         }
 
     }

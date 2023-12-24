@@ -1,6 +1,7 @@
 ﻿using BookMyShow.Business.BusinessInterfaces;
 using BookMyShow.Data;
 using BookMyShow.Models;
+using BookMyShow.Repository.IRepository;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,50 +9,50 @@ namespace BookMyShow.Business
 {
     public class VenueBusiness:IVenueBusiness
     {
-        private AppDbContext _appcontext;
-        public VenueBusiness(AppDbContext appDbContext)
+        private readonly IVenueRepository venueRepository;
+        public VenueBusiness(IVenueRepository venueRepository)
         {
-            _appcontext = appDbContext;
+            this.venueRepository = venueRepository;
         }
         public void CreateVenue(Venue venue)
         {
-            _appcontext.Venues.Add(venue);
-            _appcontext.SaveChanges();
+            venueRepository.AddVenue(venue);
         }
 
         public List<Venue> GetAllVenues()
         {
-            return _appcontext.Venues.ToList(); ;
+            return venueRepository.GetAllVenues();
         }
 
         public Venue GetVenue(int? id)
         {
-            var venue = _appcontext.Venues.Find(id);
+            var venues = GetAllVenues();
+            var venue = venues.FirstOrDefault(v => v.VenueId == id);
             return venue;
         }
 
 
         public bool BookVenue(int id)
         {
-            var venue = _appcontext.Venues.Find(id);
+            var venue = GetVenue(id);
             if (venue == null || venue.IsBooked==true)
             {
                 return false;
             }
             venue.IsBooked = true;
-            _appcontext.SaveChanges();
+            venueRepository.UpdateVenue(venue);
             return true;
         }
 
         public bool UnBookVenue(int id)
         {
-            var venue = _appcontext.Venues.FirstOrDefault(v=>v.VenueId== id);
+            var venue = GetVenue(id);
             if (venue == null)
             {
                 return false;
             }
             venue.IsBooked = false;
-            _appcontext.SaveChanges();
+            venueRepository.UpdateVenue(venue);
             return true;
         }
     }

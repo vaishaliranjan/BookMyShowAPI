@@ -4,6 +4,7 @@ using BookMyShow.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace BookMyShow.Controllers
 {
@@ -21,28 +22,42 @@ namespace BookMyShow.Controllers
         [Authorize(Roles = "Admin,Organizer")]
         public IActionResult Get(int? id)
         {
-            if (id == null)
+            try
             {
-                return Ok(_venueBusiness.GetAllVenues());
+                if (id == null)
+                {
+                    return Ok(_venueBusiness.GetAllVenues());
+                }
+                var venue = _venueBusiness.GetVenue(id);
+                if (venue == null)
+                {
+                    return NotFound("Venue not found!");
+                }
+                return Ok(venue);
             }
-            var venue = _venueBusiness.GetVenue(id);
-            if (venue == null)
+            catch (Exception ex)
             {
-                return NotFound("Venue not found!");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-            return Ok(venue);
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public IActionResult Post([FromBody] Venue venue)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                _venueBusiness.CreateVenue(venue);
+                return Ok("Venue added successfully");
             }
-            _venueBusiness.CreateVenue(venue);
-            return Ok("Venue added successfully");
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
     }
 }

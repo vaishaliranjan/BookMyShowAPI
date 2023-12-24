@@ -4,6 +4,7 @@ using BookMyShow.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace BookMyShow.Controllers
 {
@@ -21,28 +22,42 @@ namespace BookMyShow.Controllers
         [Authorize(Roles ="Admin")]
         public IActionResult Get(string id)
         {
-            if (id == null)
+            try
             {
-                return Ok(_adminBusiness.GetAllAdmins());
+                if (id == null)
+                {
+                    return Ok(_adminBusiness.GetAllAdmins());
+                }
+                var admin = _adminBusiness.GetAdmin(id);
+                if (admin == null)
+                {
+                    return NotFound("Admin not found!");
+                }
+                return Ok(admin);
             }
-            var admin = _adminBusiness.GetAdmin(id);
-            if (admin == null)
+            catch(Exception ex)
             {
-                return NotFound("Admin not found!");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-            return Ok(admin);
         }
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public IActionResult Delete(string id)
         {
-            var result = _adminBusiness.DeleteAdmin(id);
-            if (result)
+            try
             {
-                return Ok("Admin deleted successfully");
+                var result = _adminBusiness.DeleteAdmin(id);
+                if (result)
+                {
+                    return Ok("Admin deleted successfully");
+                }
+                return NotFound("Admin not found");
             }
-            return NotFound("Admin not found");
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
     }
 }

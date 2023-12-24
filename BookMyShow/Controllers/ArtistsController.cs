@@ -3,6 +3,7 @@ using BookMyShow.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace BookMyShow.Controllers
 {
@@ -21,31 +22,45 @@ namespace BookMyShow.Controllers
         [Authorize(Roles = "Admin,Organizer")]
         public IActionResult Get(int? id)
         {
-            if(id == null)
+            try
             {
-                return Ok(_artistBusiness.GetAllArtists());
+                if (id == null)
+                {
+                    return Ok(_artistBusiness.GetAllArtists());
+                }
+                var artist = _artistBusiness.GetArtist(id);
+                if (artist == null)
+                {
+                    return NotFound("Artist not found!");
+                }
+                return Ok(artist);
             }
-            var artist = _artistBusiness.GetArtist(id);
-            if(artist == null)
+            catch (Exception ex)
             {
-                return NotFound("Artist not found!");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-            return Ok(artist);
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public IActionResult Post([FromBody] Artist artist)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                if (_artistBusiness.CreateArtist(artist))
+                {
+                    return Ok("Artist added successfully");
+                }
+                return BadRequest("Invalid DateTime");
             }
-            if (_artistBusiness.CreateArtist(artist))
+            catch (Exception ex)
             {
-                return Ok("Artist added successfully");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-            return BadRequest("Invalid DateTime");
         }
     }
 }

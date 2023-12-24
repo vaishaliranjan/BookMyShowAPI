@@ -4,6 +4,8 @@ using BookMyShow.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Security.Claims;
 
 namespace BookMyShow.Controllers
 {
@@ -20,65 +22,91 @@ namespace BookMyShow.Controllers
         }
 
 
+       
         [HttpGet]
         [Authorize(Roles = "Admin,Customer")]
-        public IActionResult Get(int? id, string userId)
+        public IActionResult Get(int? id)
         {
-            //admin viewing bookings
-            if (id == null && userId == null)
+            try
             {
-                return Ok(_bookingBusiness.GetAllBookings());
-            }
-            //customer viewing bookings
-            else if (id == null && userId != null)
-            {
-                return Ok(_bookingBusiness.GetAllBookings(userId));
-            }
-            //admin-requesting specific booking
-            else if (id != null && userId == null)
-            {
-                var booking =_bookingBusiness.GetBooking(id);
-                if (booking == null)
+                var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userId = currentUserId;
+                // Check if the user is an admin
+                if (User.IsInRole("Admin"))
                 {
-                    return NotFound("Booking not found");
+                    // Admin can view all bookings
+                    if (id == null)
+                    {
+                        return Ok(_bookingBusiness.GetAllBookings());
+                    }
+                    // Admin can request a specific booking
+                    else
+                    {
+                        var booking = _bookingBusiness.GetBooking(id);
+                        if (booking == null)
+                        {
+                            return NotFound("Booking not found");
+                        }
+                        return Ok(booking);
+                    }
                 }
-                return Ok(booking);
-            }
-            //customer requesting speific booking 
-            else
-            {
-                var booking = _bookingBusiness.GetBooking(id, userId);
-                if (booking == null)
+                // Check if the user is a customer
+                else if (User.IsInRole("Customer"))
                 {
-                    return NotFound("Booking not found");
+                    // Customer can only view their own bookings
+                    if (id == null)
+                    {
+                        return Ok(_bookingBusiness.GetAllBookings(userId));
+                    }
+                    // Customer can request a specific booking
+                    else
+                    {
+                        var booking = _bookingBusiness.GetBooking(id, userId);
+                        if (booking == null)
+                        {
+                            return NotFound("Booking not found");
+                        }
+                        return Ok(booking);
+                    }
                 }
-                return Ok(booking);
-            }
 
+                // If none of the conditions are met, return unauthorized or forbid
+                return Forbid(); // Or return Unauthorized() depending on your desired behavior
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
-
 
         [HttpPost]
-        [Authorize(Roles = "Admin,Customer")]
+        [Authorize(Roles = "Customer")]
         public IActionResult Post([FromBody] Booking booking)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
+            try {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                booking.UserId = currentUserId;
+                var e = _eventBusiness.GetEvent(booking.EventId);
+                if (e == null)
+                {
+                    return NotFound("Event not found");
+                }
+                if (!_bookingBusiness.CreateBooking(booking, e))
+                {
+                    return BadRequest("Enter valid tickets. Number of tickets avilable = " + e.NumberOfTickets);
+                }
+                booking.UserId = currentUserId;
+                _eventBusiness.DecrementTicket(booking.EventId, booking.NumberOfTickets);
+                return Ok("Tickets booked successfully");
             }
-            var e = _eventBusiness.GetEvent(booking.EventId);
-            if(e == null)
+            catch (Exception ex)
             {
-                return NotFound("Event not found");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-            if(!_bookingBusiness.CreateBooking(booking, e))
-            {
-                return BadRequest("Enter valid tickets. Number of tickets avilable = "+e.NumberOfTickets);
-            }
-            _eventBusiness.DecrementTicket(booking.EventId, booking.NumberOfTickets);
-            return Ok("Tickets booked successfully");
         }
-
-
     }
 }

@@ -2,6 +2,7 @@
 using BookMyShow.Data;
 using BookMyShow.Models;
 using BookMyShow.Models.Enum;
+using BookMyShow.Repository.IRepository;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,25 +10,26 @@ namespace BookMyShow.Business
 {
     public class CustomerBusiness : ICustomerBusiness
     {
-        private AppDbContext _appDbContext;
-        public CustomerBusiness(AppDbContext appDbContext)
+        private readonly IUserRepository userRepository;
+        public CustomerBusiness(IUserRepository userRepository)
         {
-            _appDbContext = appDbContext;
+            this.userRepository = userRepository;
         }
 
         public User GetCustomer(string id)
         {
-            var customer = _appDbContext.Users.Find(id);
-            if (customer.Role == Role.Customer)
+            var customers = GetAllCustomers();
+            var customer = customers.FirstOrDefault(o => o.IdentityUserId.Equals(id));
+            if (customer == null)
             {
-                return customer;
+                return null;
             }
-            return null;
+            return customer;
         }
 
         public List<User> GetAllCustomers()
         {
-            var users = _appDbContext.Users;
+            var users = userRepository.GetAllUsers();
             var customers = users.Where(u => u.Role == Role.Customer).ToList();
             return customers;
         }

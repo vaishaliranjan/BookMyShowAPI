@@ -2,6 +2,7 @@
 using BookMyShow.Models;
 using BookMyShow.Models.Enum;
 using BookMyShow.Models.ViewsModel;
+using BookMyShow.Repository.IRepository;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 
@@ -11,12 +12,12 @@ namespace BookMyShow.Business
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly AppDbContext _appDbContext;
-        public AuthenticationBusiness(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, AppDbContext appDbContext)
+        private readonly IUserRepository _userRepository;
+        public AuthenticationBusiness(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IUserRepository userRepository)
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _appDbContext = appDbContext;
+            _userRepository = userRepository;
         }
         public async Task<bool> AddUser(AddUserModel model)
         {
@@ -54,8 +55,7 @@ namespace BookMyShow.Business
                     Username = model.Username,
                     Name = model.Name
                 };
-                _appDbContext.Users.Add(user);
-                _appDbContext.SaveChanges();
+                _userRepository.AddUser(user);
                 return true;
 
             }
@@ -79,8 +79,7 @@ namespace BookMyShow.Business
                     Username=model.Username,
                     Name =model.Name
                 }; 
-                _appDbContext.Users.Add(user);
-                _appDbContext.SaveChanges();
+                _userRepository.AddUser(user);
                 return true;
 
             }

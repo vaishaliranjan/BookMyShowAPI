@@ -12,6 +12,7 @@ namespace BookMyShow.Models
         [JsonIgnore]
         public Event Event { get; set; }
         [ForeignKey("User")]
+        [JsonIgnore]
         public string UserId { get; set; }
         [JsonIgnore]
         public User User { get; set; }

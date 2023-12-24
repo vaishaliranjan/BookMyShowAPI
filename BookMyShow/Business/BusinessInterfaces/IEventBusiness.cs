@@ -9,6 +9,6 @@ namespace BookMyShow.Business.BusinessInterfaces
         public Event GetEvent(int? id, string userId = null);
         public void CreateEvent(Event e);
         public bool DeleteEvent(int id, string organizerId=null);
-        public void DecrementTicket(int id, int numberOfTickets);
+        public bool DecrementTicket(int id, int numberOfTickets);
     }
 }

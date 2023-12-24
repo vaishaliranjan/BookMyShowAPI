@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace BookMyShow.Controllers
@@ -23,54 +24,82 @@ namespace BookMyShow.Controllers
         [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Users([FromBody] AddUserModel model)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                var result = await _accountBusiness.AddUser(model);
+                if (result)
+                {
+                    return Ok("Account created successfully.");
+                }
+                return StatusCode(StatusCodes.Status400BadRequest, "User already exists");
             }
-            var result = await _accountBusiness.AddUser(model);
-            if (result)
+            catch (Exception ex)
             {
-                return Ok("Account created successfully.");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-            return StatusCode(StatusCodes.Status400BadRequest, "User already exists");
         }
 
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                var result = await _accountBusiness.Register(model);
+                if (result)
+                {
+                    return Ok("Account created successfully.");
+                }
+                return StatusCode(StatusCodes.Status400BadRequest, "User already exists");
             }
-            var result = await _accountBusiness.Register(model);
-            if (result)
+            catch (Exception ex)
             {
-                return Ok("Account created successfully.");
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-            return StatusCode(StatusCodes.Status400BadRequest,"User already exists");
         }
 
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
 
-            var result = await _accountBusiness.Login(model);
-            if (result)
-            {
-                return Ok("Logged In successfully.");
+                var result = await _accountBusiness.Login(model);
+                if (result)
+                {
+                    return Ok("Logged In successfully.");
+                }
+                return StatusCode(StatusCodes.Status404NotFound, "User Not Found");
             }
-            return StatusCode(StatusCodes.Status404NotFound, "User Not Found");
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
-            await _accountBusiness.Logout();
-            return Ok("Logged out successfully.");
+            try
+            {
+                await _accountBusiness.Logout();
+                return Ok("Logged out successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
     }
 }

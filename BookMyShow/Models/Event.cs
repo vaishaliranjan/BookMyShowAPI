@@ -19,6 +19,7 @@ namespace BookMyShow.Models
         public int NumberOfTickets { get; set; }
         public double Price { get; set; }
         [ForeignKey("User")]
+        [JsonIgnore]
         public string UserId { get; set; }
         [JsonIgnore]
         public User User { get; set; }
