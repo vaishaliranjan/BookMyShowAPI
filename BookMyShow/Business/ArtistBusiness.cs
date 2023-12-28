@@ -1,8 +1,6 @@
 ﻿using BookMyShow.Business.BusinessInterfaces;
-using BookMyShow.Data;
 using BookMyShow.Models;
 using BookMyShow.Repository.IRepository;
-using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -59,7 +57,7 @@ namespace BookMyShow.Business
         public bool UnBookArtist(int id)
         {
             var artist = GetArtist(id);
-            if (artist == null)
+            if (artist == null || artist.IsBooked==false)
             {
                 return false;
             }

@@ -1,5 +1,4 @@
 ﻿using BookMyShow.Models;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace BookMyShow.Repository.IRepository

@@ -1,7 +1,6 @@
 ﻿using BookMyShow.Data;
 using BookMyShow.Models;
 using BookMyShow.Repository.IRepository;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -30,9 +29,9 @@ namespace BookMyShow.Repository
 
         public void UpdateArtist(Artist artist)
         {
-            var artistChoosen = _dbContext.Artists.Find(artist.Id);
-            artistChoosen.IsBooked = artist.IsBooked;
-            _dbContext.SaveChanges();
+            var artistChoosen = _dbContext.Artists.FirstOrDefault(a=>a.Id==artist.Id);
+                artistChoosen.IsBooked = artist.IsBooked;
+                _dbContext.SaveChanges();
         }
 
     }

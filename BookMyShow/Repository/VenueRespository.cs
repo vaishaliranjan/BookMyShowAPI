@@ -1,7 +1,6 @@
 ﻿using BookMyShow.Data;
 using BookMyShow.Models;
 using BookMyShow.Repository.IRepository;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -20,7 +19,6 @@ namespace BookMyShow.Repository
             return _dbContext.Venues.ToList();
         }
 
-
         public void AddVenue(Venue venue)
         {
             _dbContext.Venues.Add(venue);
@@ -30,8 +28,9 @@ namespace BookMyShow.Repository
         public void UpdateVenue(Venue venue)
         {
             var venueChoosen = _dbContext.Venues.Find(venue.VenueId);
-            venueChoosen.IsBooked=venue.IsBooked;
-            _dbContext.SaveChanges();
+
+                venueChoosen.IsBooked = venue.IsBooked;
+                _dbContext.SaveChanges();
         }
     }
 }

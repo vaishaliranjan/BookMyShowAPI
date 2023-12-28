@@ -1,8 +1,6 @@
 ﻿using BookMyShow.Data;
 using BookMyShow.Models;
 using BookMyShow.Repository.IRepository;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -26,6 +24,5 @@ namespace BookMyShow.Repository
             _dbContext.Bookings.Add(booking);
             _dbContext.SaveChanges();
         }
-      
     }
 }

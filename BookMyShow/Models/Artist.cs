@@ -1,7 +1,8 @@
-﻿using System;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace BookMyShow.Models
 {
+    [ExcludeFromCodeCoverage]
     public class Artist
     {
         public int Id { get; set; }

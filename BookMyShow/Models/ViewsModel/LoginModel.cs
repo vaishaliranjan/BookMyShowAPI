@@ -1,7 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BookMyShow.Models.ViewsModel
 {
+    [ExcludeFromCodeCoverage]
+
     public class LoginModel
     {
         [Required]

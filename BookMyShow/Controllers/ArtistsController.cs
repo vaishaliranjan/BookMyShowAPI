@@ -26,7 +26,12 @@ namespace BookMyShow.Controllers
             {
                 if (id == null)
                 {
-                    return Ok(_artistBusiness.GetAllArtists());
+                    var artists = _artistBusiness.GetAllArtists();
+                    if(artists == null)
+                    {
+                        return NotFound("Artists not found!");
+                    }
+                    return Ok(artists);
                 }
                 var artist = _artistBusiness.GetArtist(id);
                 if (artist == null)

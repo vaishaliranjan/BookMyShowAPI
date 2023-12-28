@@ -1,5 +1,4 @@
-﻿using BookMyShow.Business;
-using BookMyShow.Business.BusinessInterfaces;
+﻿using BookMyShow.Business.BusinessInterfaces;
 using BookMyShow.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -26,7 +25,12 @@ namespace BookMyShow.Controllers
             {
                 if (id == null)
                 {
-                    return Ok(_venueBusiness.GetAllVenues());
+                    var venues = _venueBusiness.GetAllVenues();
+                    if(venues== null)
+                    {
+                        return NotFound("Venues not found!");
+                    }
+                    return Ok(venues);
                 }
                 var venue = _venueBusiness.GetVenue(id);
                 if (venue == null)

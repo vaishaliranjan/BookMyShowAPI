@@ -1,5 +1,4 @@
-﻿using BookMyShow.Business;
-using BookMyShow.Business.BusinessInterfaces;
+﻿using BookMyShow.Business.BusinessInterfaces;
 using BookMyShow.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -31,15 +30,17 @@ namespace BookMyShow.Controllers
             {
                 var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var userId = currentUserId;
-                // Check if the user is an admin
                 if (User.IsInRole("Admin"))
                 {
-                    // Admin can view all bookings
                     if (id == null)
                     {
-                        return Ok(_bookingBusiness.GetAllBookings());
+                        var bookings = _bookingBusiness.GetAllBookings();
+                        if(bookings == null)
+                        {
+                            return NotFound("Bookings not found");
+                        }
+                        return Ok(bookings);
                     }
-                    // Admin can request a specific booking
                     else
                     {
                         var booking = _bookingBusiness.GetBooking(id);
@@ -50,15 +51,17 @@ namespace BookMyShow.Controllers
                         return Ok(booking);
                     }
                 }
-                // Check if the user is a customer
-                else if (User.IsInRole("Customer"))
+                else 
                 {
-                    // Customer can only view their own bookings
                     if (id == null)
                     {
-                        return Ok(_bookingBusiness.GetAllBookings(userId));
+                        var bookings = _bookingBusiness.GetAllBookings(userId);
+                        if (bookings==null)
+                        {
+                            return NotFound("Bookings not found");
+                        }
+                        return Ok(bookings);
                     }
-                    // Customer can request a specific booking
                     else
                     {
                         var booking = _bookingBusiness.GetBooking(id, userId);
@@ -67,11 +70,9 @@ namespace BookMyShow.Controllers
                             return NotFound("Booking not found");
                         }
                         return Ok(booking);
+                       
                     }
                 }
-
-                // If none of the conditions are met, return unauthorized or forbid
-                return Forbid(); // Or return Unauthorized() depending on your desired behavior
             }
             catch (Exception ex)
             {

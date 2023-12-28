@@ -1,8 +1,6 @@
 ﻿using BookMyShow.Business.BusinessInterfaces;
-using BookMyShow.Data;
 using BookMyShow.Models;
 using BookMyShow.Repository.IRepository;
-using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -35,7 +33,7 @@ namespace BookMyShow.Business
             {
                 return bookings;
             }
-            var customerBookings = bookings.FindAll(b => b.UserId == customerId).ToList();
+            var customerBookings = bookings.Where(b => b.UserId == customerId).ToList();
             return customerBookings;
         }
 
@@ -55,7 +53,7 @@ namespace BookMyShow.Business
 
             var users = userRepository.GetAllUsers();
             var user = users.FirstOrDefault(u=>u.IdentityUserId == customerId);
-            if (user == null || user.IdentityUserId != customerId)
+            if (user == null || user.IdentityUserId != booking.UserId)
             {
                 return null;
             }

@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookMyShow", "BookMyShow\BookMyShow.csproj", "{24458AFF-FD58-42EF-B0E4-692D726A91EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookMyShow", "BookMyShow\BookMyShow.csproj", "{24458AFF-FD58-42EF-B0E4-692D726A91EB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BookMyShow.Tests", "Controllers.Tests\BookMyShow.Tests.csproj", "{96968C7B-A6A5-40B1-9EC8-F20FCE99D579}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BookMyShow.Tests", "BookMyShow.Tests", "{ED551B5C-E36F-447B-9189-CCDF04B2E660}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +19,16 @@ Global
 		{24458AFF-FD58-42EF-B0E4-692D726A91EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24458AFF-FD58-42EF-B0E4-692D726A91EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24458AFF-FD58-42EF-B0E4-692D726A91EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96968C7B-A6A5-40B1-9EC8-F20FCE99D579}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96968C7B-A6A5-40B1-9EC8-F20FCE99D579}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96968C7B-A6A5-40B1-9EC8-F20FCE99D579}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96968C7B-A6A5-40B1-9EC8-F20FCE99D579}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{96968C7B-A6A5-40B1-9EC8-F20FCE99D579} = {ED551B5C-E36F-447B-9189-CCDF04B2E660}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FFF0E3FF-CCBA-4604-ADC6-46E1BEDD6EC2}

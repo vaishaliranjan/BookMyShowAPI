@@ -1,5 +1,4 @@
-﻿using BookMyShow.Data;
-using BookMyShow.Models;
+﻿using BookMyShow.Models;
 using BookMyShow.Models.Enum;
 using BookMyShow.Models.ViewsModel;
 using BookMyShow.Repository.IRepository;
@@ -95,10 +94,9 @@ namespace BookMyShow.Business
             return false;
         }
 
-        public async Task<bool> Logout()
+        public async Task Logout()
         {
             await _signInManager.SignOutAsync();
-            return true;
         }
     }
 }

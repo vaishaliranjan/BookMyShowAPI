@@ -1,9 +1,6 @@
 ﻿using BookMyShow.Business.BusinessInterfaces;
-using BookMyShow.Data;
 using BookMyShow.Models;
 using BookMyShow.Repository.IRepository;
-using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,7 +16,6 @@ namespace BookMyShow.Business
             this.userRepository = userRepository;
         }
 
-
         public void CreateEvent(Event e)
         {
             eventRepository.AddEvent(e);       
@@ -30,24 +26,25 @@ namespace BookMyShow.Business
             var e= GetEvent(id);
             if (e != null)
             {
-                return false;
+                e.NumberOfTickets = e.NumberOfTickets - numberOfTickets;
+                eventRepository.UpdateEvent(e);
+                return true;
             }
-            eventRepository.UpdateEvent(e);
-            return true;
+            return false;
         }
 
         public bool DeleteEvent(int id, string organizerId = null)
         {
             var e = GetEvent(id);
-            //check if same organizer
-            if (e.InitialTickets != e.NumberOfTickets)
-            {
-                return false;
-            }
             if (e == null)
             {
                 return false;
             }
+            if (e.InitialTickets != e.NumberOfTickets)
+            {
+                return false;
+            }
+            
             if (organizerId == null)
             {
                 eventRepository.RemoveEvent(e);
@@ -73,27 +70,25 @@ namespace BookMyShow.Business
             return organizerEvents;
         }
 
-
         public Event GetEvent(int? id, string userId=null)
         {
-            var events = GetAllEvents(userId);
+            var events = GetAllEvents();
             var eventChoosen = events.FirstOrDefault(e => e.Id == id);
             if (eventChoosen == null)
             {
                 return null;
             }
-            if(userId == null)
+            if (userId == null)
             {
                 return eventChoosen;
             }
             var users= userRepository.GetAllUsers();
             var user = users.FirstOrDefault(u=> u.IdentityUserId==userId);
-            if(user == null || user.IdentityUserId !=userId)
+            if(user == null || user.IdentityUserId !=eventChoosen.UserId)
             {
                 return null;
             }
             return eventChoosen;
         }
-
     }
 }

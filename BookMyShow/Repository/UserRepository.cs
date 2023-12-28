@@ -1,7 +1,6 @@
 ﻿using BookMyShow.Data;
 using BookMyShow.Models;
 using BookMyShow.Repository.IRepository;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,7 +18,6 @@ namespace BookMyShow.Repository
             _dbContext.Users.Add(user);
             _dbContext.SaveChanges();
         }
-
         public List<User> GetAllUsers()
         {
             return _dbContext.Users.ToList();
@@ -27,8 +25,10 @@ namespace BookMyShow.Repository
 
         public void RemoveUser(User user)
         {
-            _dbContext.Users.Remove(user);
-            _dbContext.SaveChanges();
+            var userChoosen = _dbContext.Users.FirstOrDefault(u=>u.IdentityUserId == user.IdentityUserId);
+
+                _dbContext.Users.Remove(userChoosen);
+                _dbContext.SaveChanges();
         }
     }
 }

@@ -1,8 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
 namespace BookMyShow.Models.ViewsModel
 {
+    [ExcludeFromCodeCoverage]
+
     public class RegisterModel
     {
         [Required]

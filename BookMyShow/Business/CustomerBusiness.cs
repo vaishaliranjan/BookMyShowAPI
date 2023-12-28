@@ -1,5 +1,4 @@
 ﻿using BookMyShow.Business.BusinessInterfaces;
-using BookMyShow.Data;
 using BookMyShow.Models;
 using BookMyShow.Models.Enum;
 using BookMyShow.Repository.IRepository;

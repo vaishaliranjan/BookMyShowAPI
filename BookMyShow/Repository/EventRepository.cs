@@ -1,8 +1,6 @@
 ﻿using BookMyShow.Data;
 using BookMyShow.Models;
 using BookMyShow.Repository.IRepository;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -27,17 +25,19 @@ namespace BookMyShow.Repository
             return _dbContext.Events.ToList();
         }
 
-        public void RemoveEvent(Event e)
+        public void RemoveEvent(Event eve)
         {
-            _dbContext.Events.Remove(e);
-            _dbContext.SaveChanges();
+            var eventChoosen = _dbContext.Events.FirstOrDefault(e => e.Id == eve.Id);
+                _dbContext.Events.Remove(eventChoosen);
+                _dbContext.SaveChanges();
         }
 
-        public void UpdateEvent(Event e)
+        public void UpdateEvent(Event eve)
         {
-            var eventChoosen = _dbContext.Events.Find(e.Id);
-            eventChoosen.NumberOfTickets = e.NumberOfTickets;
-            _dbContext.SaveChanges();
+            var eventChoosen = _dbContext.Events.FirstOrDefault(e=> e.Id==eve.Id);
+
+                eventChoosen.NumberOfTickets = eve.NumberOfTickets;
+                _dbContext.SaveChanges();
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using BookMyShow.Business.BusinessInterfaces;
-using BookMyShow.Data;
 using BookMyShow.Models;
 using BookMyShow.Repository.IRepository;
 using System.Collections.Generic;
@@ -31,7 +30,6 @@ namespace BookMyShow.Business
             return venue;
         }
 
-
         public bool BookVenue(int id)
         {
             var venue = GetVenue(id);
@@ -47,7 +45,7 @@ namespace BookMyShow.Business
         public bool UnBookVenue(int id)
         {
             var venue = GetVenue(id);
-            if (venue == null)
+            if (venue == null || venue.IsBooked== false)
             {
                 return false;
             }

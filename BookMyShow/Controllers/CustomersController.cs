@@ -1,6 +1,4 @@
-﻿using BookMyShow.Business;
-using BookMyShow.Business.BusinessInterfaces;
-using BookMyShow.Models;
+﻿using BookMyShow.Business.BusinessInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +25,12 @@ namespace BookMyShow.Controllers
             {
                 if (id == null)
                 {
-                    return Ok(_customerBusiness.GetAllCustomers());
+                    var customers = _customerBusiness.GetAllCustomers();
+                    if(customers == null)
+                    {
+                        return NotFound("Customers not found");
+                    }
+                    return Ok(customers);
                 }
                 var customer = _customerBusiness.GetCustomer(id);
                 if (customer == null)
