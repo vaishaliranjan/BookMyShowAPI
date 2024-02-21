@@ -33,8 +33,6 @@ namespace BookMyShow.Tests.Controllers.Tests
                 Timing="25-12-2023T04:00:00"
             }
         };
-
-
         }
 
         [TestMethod]

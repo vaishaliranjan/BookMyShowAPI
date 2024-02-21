@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace BookMyShow.Controllers
 {
@@ -12,10 +13,10 @@ namespace BookMyShow.Controllers
     [ApiController]
     public class EventsController : ControllerBase
     {
-        private IEventBusiness _eventBusiness;
-        private IArtistBusiness _artistBusiness;
-        private IVenueBusiness _venueBusiness;
-        private IOrganizerBusiness _organizerBusiness;
+        private readonly IEventBusiness _eventBusiness;
+        private readonly IArtistBusiness _artistBusiness;
+        private readonly IVenueBusiness _venueBusiness;
+        private readonly IOrganizerBusiness _organizerBusiness;
 
         public EventsController(IEventBusiness eventBusiness, IArtistBusiness artistBusiness, IVenueBusiness venueBusiness, IOrganizerBusiness organizerBusiness)
         {
@@ -27,27 +28,26 @@ namespace BookMyShow.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin,Customer,Organizer")]
-        public IActionResult Get(int? id)
+        public async Task<IActionResult> Get(int? id)
         {
             try
             {
+                //var user = user.Identity.GetUserId();-> Doubt to ritika + bookings
                 var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var userId = currentUserId;
                 if (User.IsInRole("Admin") || User.IsInRole("Customer"))
                 {
                     if (id == null)
                     {
-                        var bookings = _eventBusiness.GetAllEvents();
+                        var bookings = await _eventBusiness.GetAllEvents();
                         if(bookings == null)
                         {
                             return NotFound("Bookings not found!");
                         }
                         return Ok(bookings);
                     }
-
                     else
                     {
-                        var eventChoosen = _eventBusiness.GetEvent(id);
+                        var eventChoosen = await _eventBusiness.GetEvent(id);
                         if (eventChoosen == null)
                         {
                             return NotFound("Event not found");
@@ -55,12 +55,11 @@ namespace BookMyShow.Controllers
                         return Ok(eventChoosen);
                     }
                 }
-
                 else
                 {
                     if (id == null)
                     {
-                        var bookings = _eventBusiness.GetAllEvents(userId);
+                        var bookings =await _eventBusiness.GetAllEvents(currentUserId);
                         if (bookings == null)
                         {
                             return NotFound("Bookings not found!");
@@ -70,7 +69,7 @@ namespace BookMyShow.Controllers
 
                     else
                     {
-                        var eventChoosen = _eventBusiness.GetEvent(id, userId);
+                        var eventChoosen = await _eventBusiness.GetEvent(id, currentUserId);
                         if (eventChoosen == null)
                         {
                             return NotFound("Event not found");
@@ -78,7 +77,6 @@ namespace BookMyShow.Controllers
                         return Ok(eventChoosen);
                     }
                 }
-
             }
             catch (Exception ex)
             {
@@ -88,27 +86,26 @@ namespace BookMyShow.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Organizer")]
-        public IActionResult Post([FromBody] Event e)
+        public async Task<IActionResult> Post([FromBody] Event e)
         {
             try
             {
                 var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var userId = currentUserId;
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
                 }
-                var artist = _artistBusiness.GetArtist(e.ArtistId);
-                var venue = _venueBusiness.GetVenue(e.VenueId);
-                e.UserId = userId;
+                var artist = await _artistBusiness.GetArtist(e.ArtistId);
+                var venue = await _venueBusiness.GetVenue(e.VenueId);
+                e.UserId = currentUserId;
                 if (artist != null && venue != null)
                 {
                     e.InitialTickets = e.NumberOfTickets;
-                    _eventBusiness.CreateEvent(e);
+                    await _eventBusiness.CreateEvent(e);
                     var artistId = e.ArtistId;
                     var venueId = e.VenueId;
-                    _artistBusiness.BookArtist(artistId);
-                    _venueBusiness.BookVenue(venueId);
+                    await _artistBusiness.BookArtist(artistId);
+                    await _venueBusiness.BookVenue(venueId);
                     return Ok("Event added successfully");
                 }
                 return BadRequest("Invalid Request");
@@ -122,26 +119,26 @@ namespace BookMyShow.Controllers
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin,Organizer")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             try
             {
                 var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var userId = currentUserId;
-                var e = _eventBusiness.GetEvent(id);
+                var e =await _eventBusiness.GetEvent(id);
                 bool result;
                 if (User.IsInRole("Admin"))
                 {
-                    result = _eventBusiness.DeleteEvent(id);
+                    result = await _eventBusiness.DeleteEvent(id);
                 }
                 else
                 {
-                    result = _eventBusiness.DeleteEvent(id, userId);
+                    result = await _eventBusiness.DeleteEvent(id, userId);
                 }
                 if (result)
                 {
-                    _artistBusiness.UnBookArtist(e.ArtistId);
-                    _venueBusiness.UnBookVenue(e.VenueId);
+                    await _artistBusiness.UnBookArtist(e.ArtistId);
+                    await _venueBusiness.UnBookVenue(e.VenueId);
                     return Ok("Event deleted successfully");
                 }
                 return NotFound("Event not found or tickets already booked!");

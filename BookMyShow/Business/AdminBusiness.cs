@@ -4,6 +4,7 @@ using BookMyShow.Models.Enum;
 using BookMyShow.Repository.IRepository;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BookMyShow.Business
 {
@@ -15,21 +16,21 @@ namespace BookMyShow.Business
             this.userRepository = userRepository;           
         }
 
-        public bool DeleteAdmin(string id)
+        public async Task<bool> DeleteAdmin(string id)
         {
-            var admin = GetAdmin(id);
+            var admin =await GetAdmin(id);
             if (admin == null)
             {
                 return false;
             }
-            userRepository.RemoveUser(admin);
+            await userRepository.RemoveUser(admin);
             return true;
         }
 
-        public User GetAdmin(string id)
+        public async Task<User> GetAdmin(string id)
         {
-            var admins = GetAllAdmins();
-            var admin = admins.FirstOrDefault(a => a.IdentityUserId.Equals(id));
+            var admins = await GetAllAdmins();
+            var admin =admins.FirstOrDefault(a => a.IdentityUserId.Equals(id));
             if (admin == null)
             {
                 return null;
@@ -37,9 +38,9 @@ namespace BookMyShow.Business
             return admin;
         }
 
-        public List<User> GetAllAdmins()
+        public async Task<List<User>> GetAllAdmins()
         {
-            var users = userRepository.GetAllUsers();
+            var users = await userRepository.GetAllUsers();
             var admins = users.Where(u => u.Role == Role.Admin).ToList();
             return admins;
         }

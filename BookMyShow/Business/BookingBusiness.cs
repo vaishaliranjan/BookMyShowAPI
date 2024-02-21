@@ -3,6 +3,7 @@ using BookMyShow.Models;
 using BookMyShow.Repository.IRepository;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BookMyShow.Business
 {
@@ -16,19 +17,19 @@ namespace BookMyShow.Business
             this.userRepository = userRepository;
         }
 
-        public bool CreateBooking(Booking booking, Event e )
+        public async Task<bool> CreateBooking(Booking booking, Event e )
         {
             if (booking.NumberOfTickets<=0 || booking.NumberOfTickets>e.NumberOfTickets)
             {
                 return false;
             }
             booking.TotalPrice = e.Price * booking.NumberOfTickets;
-            bookingRepository.AddBooking(booking);
+            await bookingRepository.AddBooking(booking);
             return true;
         }
-        public List<Booking> GetAllBookings(string customerId = null)
+        public async Task<List<Booking>> GetAllBookings(string customerId = null)
         {
-            var bookings = bookingRepository.GetAllBookings();
+            var bookings = await bookingRepository.GetAllBookings();
             if (customerId == null)
             {
                 return bookings;
@@ -38,9 +39,9 @@ namespace BookMyShow.Business
         }
 
 
-        public Booking GetBooking(int? id, string customerId = null)
+        public async Task<Booking> GetBooking(int? id, string customerId = null)
         {
-            var bookings = GetAllBookings();
+            var bookings =await GetAllBookings();
             var booking = bookings.FirstOrDefault(b => b.Id == id);
             if (booking == null)
             {
@@ -51,7 +52,7 @@ namespace BookMyShow.Business
                 return booking;
             }
 
-            var users = userRepository.GetAllUsers();
+            var users = await userRepository.GetAllUsers();
             var user = users.FirstOrDefault(u=>u.IdentityUserId == customerId);
             if (user == null || user.IdentityUserId != booking.UserId)
             {

@@ -1,12 +1,13 @@
 ﻿using BookMyShow.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BookMyShow.Repository.IRepository
 {
     public interface IVenueRepository
     {
-        public List<Venue> GetAllVenues();
-        public void AddVenue(Venue venue);
-        public void UpdateVenue(Venue venue);
+        Task<List<Venue>> GetAllVenues();
+        Task AddVenue(Venue venue);
+        Task UpdateVenue(Venue venue);
     }
 }

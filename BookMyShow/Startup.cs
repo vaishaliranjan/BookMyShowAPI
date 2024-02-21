@@ -25,18 +25,18 @@ namespace BookMyShow
         {
             Configuration = configuration;
         }
-        private async Task CreateUserRole(IServiceProvider serviceProvider)
-        {
-            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        //private async Task CreateUserRole(IServiceProvider serviceProvider)
+        //{
+        //    var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-            foreach (var roleName in new[] { "Admin", "Organizer", "Customer" })
-            {
-                if (!await roleManager.RoleExistsAsync(roleName))
-                {
-                    await roleManager.CreateAsync(new IdentityRole { Name = roleName });
-                }
-            }
-        }
+        //    foreach (var roleName in new[] { "Admin", "Organizer", "Customer" })
+        //    {
+        //        if (!await roleManager.RoleExistsAsync(roleName))
+        //        {
+        //            await roleManager.CreateAsync(new IdentityRole { Name = roleName });
+        //        }
+        //    }
+        //}
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -44,8 +44,7 @@ namespace BookMyShow
         {
             services.AddControllers();
             services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
-
-            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("BookMyShowDbConnection")));
+            services.AddDbContext<AppDbContext>();
             services.AddScoped<IAuthenticationBusiness,AuthenticationBusiness>();
             services.AddScoped<IAdminBusiness,AdminBusiness>(); 
             services.AddScoped<IArtistBusiness,ArtistBusiness>();
@@ -91,7 +90,7 @@ namespace BookMyShow
                 routes.MapControllers();
             });
 
-            CreateUserRole(serviceProvider).Wait();
+            //CreateUserRole(serviceProvider).Wait();
         }
     }
 }

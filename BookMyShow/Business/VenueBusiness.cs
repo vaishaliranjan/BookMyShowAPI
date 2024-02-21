@@ -3,6 +3,7 @@ using BookMyShow.Models;
 using BookMyShow.Repository.IRepository;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BookMyShow.Business
 {
@@ -13,44 +14,44 @@ namespace BookMyShow.Business
         {
             this.venueRepository = venueRepository;
         }
-        public void CreateVenue(Venue venue)
+        public async Task CreateVenue(Venue venue)
         {
-            venueRepository.AddVenue(venue);
+            await venueRepository.AddVenue(venue);
         }
 
-        public List<Venue> GetAllVenues()
+        public async Task<List<Venue>> GetAllVenues()
         {
-            return venueRepository.GetAllVenues();
+            return await venueRepository.GetAllVenues();
         }
 
-        public Venue GetVenue(int? id)
+        public async Task<Venue> GetVenue(int? id)
         {
-            var venues = GetAllVenues();
+            var venues =await GetAllVenues();
             var venue = venues.FirstOrDefault(v => v.VenueId == id);
             return venue;
         }
 
-        public bool BookVenue(int id)
+        public async Task<bool> BookVenue(int id)
         {
-            var venue = GetVenue(id);
+            var venue =await GetVenue(id);
             if (venue == null || venue.IsBooked==true)
             {
                 return false;
             }
             venue.IsBooked = true;
-            venueRepository.UpdateVenue(venue);
+            await venueRepository.UpdateVenue(venue);
             return true;
         }
 
-        public bool UnBookVenue(int id)
+        public async Task<bool> UnBookVenue(int id)
         {
-            var venue = GetVenue(id);
+            var venue = await GetVenue(id);
             if (venue == null || venue.IsBooked== false)
             {
                 return false;
             }
             venue.IsBooked = false;
-            venueRepository.UpdateVenue(venue);
+            await venueRepository.UpdateVenue(venue);
             return true;
         }
     }

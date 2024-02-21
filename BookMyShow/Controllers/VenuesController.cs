@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Threading.Tasks;
 
 namespace BookMyShow.Controllers
 {
@@ -19,20 +20,20 @@ namespace BookMyShow.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin,Organizer")]
-        public IActionResult Get(int? id)
+        public async Task<IActionResult> Get(int? id)
         {
             try
             {
                 if (id == null)
                 {
-                    var venues = _venueBusiness.GetAllVenues();
+                    var venues = await _venueBusiness.GetAllVenues();
                     if(venues== null)
                     {
                         return NotFound("Venues not found!");
                     }
                     return Ok(venues);
                 }
-                var venue = _venueBusiness.GetVenue(id);
+                var venue = await _venueBusiness.GetVenue(id);
                 if (venue == null)
                 {
                     return NotFound("Venue not found!");
@@ -47,7 +48,7 @@ namespace BookMyShow.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public IActionResult Post([FromBody] Venue venue)
+        public async Task<IActionResult> Post([FromBody] Venue venue)
         {
             try
             {
@@ -55,7 +56,7 @@ namespace BookMyShow.Controllers
                 {
                     return BadRequest(ModelState);
                 }
-                _venueBusiness.CreateVenue(venue);
+                await _venueBusiness.CreateVenue(venue);
                 return Ok("Venue added successfully");
             }
             catch (Exception ex)

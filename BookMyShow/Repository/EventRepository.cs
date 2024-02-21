@@ -1,8 +1,10 @@
 ﻿using BookMyShow.Data;
 using BookMyShow.Models;
 using BookMyShow.Repository.IRepository;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BookMyShow.Repository
 {
@@ -14,30 +16,29 @@ namespace BookMyShow.Repository
             _dbContext = dbContext;
         }
 
-        public void AddEvent(Event e)
+        public async Task AddEvent(Event e)
         {
-            _dbContext.Events.Add(e);
-            _dbContext.SaveChanges();
+            await _dbContext.Events.AddAsync(e);
+            await _dbContext.SaveChangesAsync();
         }
 
-        public List<Event> GetAllEvents()
+        public async Task<List<Event>> GetAllEvents()
         {
-            return _dbContext.Events.ToList();
+            return await _dbContext.Events.ToListAsync();
         }
 
-        public void RemoveEvent(Event eve)
+        public async Task RemoveEvent(Event eve)
         {
-            var eventChoosen = _dbContext.Events.FirstOrDefault(e => e.Id == eve.Id);
-                _dbContext.Events.Remove(eventChoosen);
-                _dbContext.SaveChanges();
+            var eventChoosen = await _dbContext.Events.FirstOrDefaultAsync(e => e.Id == eve.Id);
+            _dbContext.Events.Remove(eventChoosen);
+            await _dbContext.SaveChangesAsync();
         }
 
-        public void UpdateEvent(Event eve)
+        public async Task UpdateEvent(Event eve)
         {
-            var eventChoosen = _dbContext.Events.FirstOrDefault(e=> e.Id==eve.Id);
-
-                eventChoosen.NumberOfTickets = eve.NumberOfTickets;
-                _dbContext.SaveChanges();
+            var eventChoosen = await _dbContext.Events.FirstOrDefaultAsync(e=> e.Id==eve.Id);
+            eventChoosen.NumberOfTickets = eve.NumberOfTickets;
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

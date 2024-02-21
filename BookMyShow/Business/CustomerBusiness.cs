@@ -4,6 +4,7 @@ using BookMyShow.Models.Enum;
 using BookMyShow.Repository.IRepository;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BookMyShow.Business
 {
@@ -15,9 +16,9 @@ namespace BookMyShow.Business
             this.userRepository = userRepository;
         }
 
-        public User GetCustomer(string id)
+        public async Task<User> GetCustomer(string id)
         {
-            var customers = GetAllCustomers();
+            var customers =await GetAllCustomers();
             var customer = customers.FirstOrDefault(o => o.IdentityUserId.Equals(id));
             if (customer == null)
             {
@@ -26,9 +27,9 @@ namespace BookMyShow.Business
             return customer;
         }
 
-        public List<User> GetAllCustomers()
+        public async Task<List<User>> GetAllCustomers()
         {
-            var users = userRepository.GetAllUsers();
+            var users = await userRepository.GetAllUsers();
             var customers = users.Where(u => u.Role == Role.Customer).ToList();
             return customers;
         }

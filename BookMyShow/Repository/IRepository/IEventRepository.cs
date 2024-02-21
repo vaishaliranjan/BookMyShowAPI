@@ -1,13 +1,14 @@
 ﻿using BookMyShow.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BookMyShow.Repository.IRepository
 {
     public interface IEventRepository
     {
-        List<Event> GetAllEvents();
-        void AddEvent(Event e);
-        void UpdateEvent(Event e);
-        void RemoveEvent(Event e);
+        Task<List<Event>> GetAllEvents();
+        Task AddEvent(Event e);
+        Task UpdateEvent(Event e);
+        Task RemoveEvent(Event e);
     }
 }

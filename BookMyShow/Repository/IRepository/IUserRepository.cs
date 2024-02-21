@@ -1,12 +1,13 @@
 ﻿using BookMyShow.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BookMyShow.Repository.IRepository
 {
     public interface IUserRepository
     {
-        List<User> GetAllUsers();
-        void AddUser(User user);
-        void RemoveUser(User user);
+        Task<List<User>> GetAllUsers();
+        Task AddUser(User user);
+        Task RemoveUser(User user);
     }
 }

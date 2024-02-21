@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Threading.Tasks;
 
 namespace BookMyShow.Controllers
 {
@@ -20,7 +21,7 @@ namespace BookMyShow.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin,Organizer")]
-        public IActionResult Get(int? id)
+        public async Task<IActionResult> Get(int? id)
         {
             try
             {
@@ -48,17 +49,18 @@ namespace BookMyShow.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public IActionResult Post([FromBody] Artist artist)
+        public async Task<IActionResult> Post([FromBody] Artist artist)
         {
             try
             {
+                //custom validation
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
                 }
-                if (_artistBusiness.CreateArtist(artist))
+                if (await _artistBusiness.CreateArtist(artist))
                 {
-                    return Ok("Artist added successfully");
+                    return Ok("Artist added successfully");//201
                 }
                 return BadRequest("Invalid DateTime");
             }

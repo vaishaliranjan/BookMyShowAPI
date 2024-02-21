@@ -1,8 +1,10 @@
 ﻿using BookMyShow.Data;
 using BookMyShow.Models;
 using BookMyShow.Repository.IRepository;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BookMyShow.Repository
 {
@@ -14,15 +16,15 @@ namespace BookMyShow.Repository
             _dbContext = dbContext;
         }
 
-        public List<Booking> GetAllBookings()
+        public async Task<List<Booking>> GetAllBookings()
         {
-            return _dbContext.Bookings.ToList();
+            return await _dbContext.Bookings.ToListAsync();
         }
 
-        public void AddBooking(Booking booking)
+        public async Task AddBooking(Booking booking)
         {
-            _dbContext.Bookings.Add(booking);
-            _dbContext.SaveChanges();
+            await _dbContext.Bookings.AddAsync(booking);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

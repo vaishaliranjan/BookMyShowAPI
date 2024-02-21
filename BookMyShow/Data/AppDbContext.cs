@@ -12,6 +12,7 @@ namespace BookMyShow.Data
         {
 
         }
+ 
         public DbSet<User> Users { get; set; }
         public DbSet<Artist> Artists { get; set; }
         public DbSet<Venue> Venues { get; set; }

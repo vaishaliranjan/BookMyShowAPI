@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Threading.Tasks;
 
 namespace BookMyShow.Controllers
 {
@@ -19,20 +20,20 @@ namespace BookMyShow.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public IActionResult Get(string id)
+        public async Task<IActionResult> Get(string id)
         {
             try
             {
                 if (id == null)
                 {
-                    var organizers = _organizerBusiness.GetAllOrganizers();
+                    var organizers = await _organizerBusiness.GetAllOrganizers();
                     if (organizers == null)
                     {
                         return NotFound("Organizers not found!");
                     }
                     return Ok(organizers);
                 }
-                var organizer = _organizerBusiness.GetOrganizer(id);
+                var organizer =await _organizerBusiness.GetOrganizer(id);
                 if (organizer == null)
                 {
                     return NotFound("Organizer not found!");

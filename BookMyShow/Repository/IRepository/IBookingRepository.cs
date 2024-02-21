@@ -1,11 +1,12 @@
 ﻿using BookMyShow.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BookMyShow.Repository.IRepository
 {
     public interface IBookingRepository
     {
-        List<Booking> GetAllBookings();
-        void AddBooking(Booking booking);
+        Task<List<Booking>> GetAllBookings();
+        Task AddBooking(Booking booking);
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace BookMyShow.Controllers
 {
@@ -24,17 +25,16 @@ namespace BookMyShow.Controllers
        
         [HttpGet]
         [Authorize(Roles = "Admin,Customer")]
-        public IActionResult Get(int? id)
+        public async Task<IActionResult> Get(int? id)
         {
             try
             {
                 var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                var userId = currentUserId;
                 if (User.IsInRole("Admin"))
                 {
                     if (id == null)
                     {
-                        var bookings = _bookingBusiness.GetAllBookings();
+                        var bookings = await _bookingBusiness.GetAllBookings();
                         if(bookings == null)
                         {
                             return NotFound("Bookings not found");
@@ -43,7 +43,7 @@ namespace BookMyShow.Controllers
                     }
                     else
                     {
-                        var booking = _bookingBusiness.GetBooking(id);
+                        var booking =await _bookingBusiness.GetBooking(id);
                         if (booking == null)
                         {
                             return NotFound("Booking not found");
@@ -55,7 +55,7 @@ namespace BookMyShow.Controllers
                 {
                     if (id == null)
                     {
-                        var bookings = _bookingBusiness.GetAllBookings(userId);
+                        var bookings =await _bookingBusiness.GetAllBookings(currentUserId);
                         if (bookings==null)
                         {
                             return NotFound("Bookings not found");
@@ -64,7 +64,7 @@ namespace BookMyShow.Controllers
                     }
                     else
                     {
-                        var booking = _bookingBusiness.GetBooking(id, userId);
+                        var booking = await _bookingBusiness.GetBooking(id, currentUserId);
                         if (booking == null)
                         {
                             return NotFound("Booking not found");
@@ -82,7 +82,7 @@ namespace BookMyShow.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Customer")]
-        public IActionResult Post([FromBody] Booking booking)
+        public async Task<IActionResult> Post([FromBody] Booking booking)
         {
             try {
                 if (!ModelState.IsValid)
@@ -91,17 +91,17 @@ namespace BookMyShow.Controllers
                 }
                 var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 booking.UserId = currentUserId;
-                var e = _eventBusiness.GetEvent(booking.EventId);
+                var e = await _eventBusiness.GetEvent(booking.EventId);
                 if (e == null)
                 {
                     return NotFound("Event not found");
                 }
-                if (!_bookingBusiness.CreateBooking(booking, e))
+                if (!await _bookingBusiness.CreateBooking(booking, e))
                 {
                     return BadRequest("Enter valid tickets. Number of tickets avilable = " + e.NumberOfTickets);
                 }
                 booking.UserId = currentUserId;
-                _eventBusiness.DecrementTicket(booking.EventId, booking.NumberOfTickets);
+                await _eventBusiness.DecrementTicket(booking.EventId, booking.NumberOfTickets);
                 return Ok("Tickets booked successfully");
             }
             catch (Exception ex)

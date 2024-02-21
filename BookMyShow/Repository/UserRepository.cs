@@ -1,8 +1,10 @@
 ﻿using BookMyShow.Data;
 using BookMyShow.Models;
 using BookMyShow.Repository.IRepository;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BookMyShow.Repository
 {
@@ -13,22 +15,21 @@ namespace BookMyShow.Repository
         {
             _dbContext = dbContext;
         }
-        public void AddUser(User user)
+        public async Task AddUser(User user)
         {
-            _dbContext.Users.Add(user);
-            _dbContext.SaveChanges();
+            await _dbContext.Users.AddAsync(user);
+            await _dbContext.SaveChangesAsync();
         }
-        public List<User> GetAllUsers()
+        public async Task<List<User>> GetAllUsers()
         {
-            return _dbContext.Users.ToList();
+            return await _dbContext.Users.ToListAsync();
         }
 
-        public void RemoveUser(User user)
+        public async Task RemoveUser(User user)
         {
-            var userChoosen = _dbContext.Users.FirstOrDefault(u=>u.IdentityUserId == user.IdentityUserId);
-
-                _dbContext.Users.Remove(userChoosen);
-                _dbContext.SaveChanges();
+            var userChoosen = await _dbContext.Users.FirstOrDefaultAsync(u=>u.IdentityUserId == user.IdentityUserId);
+            _dbContext.Users.Remove(userChoosen);
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

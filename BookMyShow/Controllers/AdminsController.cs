@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Threading.Tasks;
 
 namespace BookMyShow.Controllers
 {
@@ -18,20 +19,20 @@ namespace BookMyShow.Controllers
 
         [HttpGet]
         [Authorize(Roles ="Admin")]
-        public IActionResult Get(string id)
+        public async Task<IActionResult> Get(string id)
         {
             try
             {
                 if (id == null)
                 {
-                    var admins = _adminBusiness.GetAllAdmins();
+                    var admins =await _adminBusiness.GetAllAdmins();
                     if (admins == null)
                     {
                         return NotFound("Admins not found!");
                     }
                     return Ok(admins);
                 }
-                var admin = _adminBusiness.GetAdmin(id);
+                var admin =await  _adminBusiness.GetAdmin(id);
                 if (admin == null)
                 {
                     return NotFound("Admin not found!");
@@ -46,11 +47,11 @@ namespace BookMyShow.Controllers
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
-        public IActionResult Delete(string id)
+        public async Task<IActionResult> Delete(string id)
         {
             try
             {
-                var result = _adminBusiness.DeleteAdmin(id);
+                var result = await _adminBusiness.DeleteAdmin(id);
                 if (result)
                 {
                     return Ok("Admin deleted successfully");

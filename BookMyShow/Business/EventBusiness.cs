@@ -3,6 +3,7 @@ using BookMyShow.Models;
 using BookMyShow.Repository.IRepository;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BookMyShow.Business
 {
@@ -16,26 +17,26 @@ namespace BookMyShow.Business
             this.userRepository = userRepository;
         }
 
-        public void CreateEvent(Event e)
+        public async Task CreateEvent(Event e)
         {
-            eventRepository.AddEvent(e);       
+            await eventRepository.AddEvent(e);       
         }
 
-        public bool DecrementTicket(int id,int numberOfTickets)
+        public async Task<bool> DecrementTicket(int id,int numberOfTickets)
         {
-            var e= GetEvent(id);
+            var e= await GetEvent(id);
             if (e != null)
             {
                 e.NumberOfTickets = e.NumberOfTickets - numberOfTickets;
-                eventRepository.UpdateEvent(e);
+                await eventRepository.UpdateEvent(e);
                 return true;
             }
             return false;
         }
 
-        public bool DeleteEvent(int id, string organizerId = null)
+        public async Task<bool> DeleteEvent(int id, string organizerId = null)
         {
-            var e = GetEvent(id);
+            var e =await GetEvent(id);
             if (e == null)
             {
                 return false;
@@ -47,21 +48,21 @@ namespace BookMyShow.Business
             
             if (organizerId == null)
             {
-                eventRepository.RemoveEvent(e);
+                await eventRepository.RemoveEvent(e);
                 return true;
             }
             if (organizerId != e.UserId)
             {
                 return false;
             }
-            eventRepository.RemoveEvent(e);
+            await eventRepository.RemoveEvent(e);
             return true;
 
         }
 
-        public List<Event> GetAllEvents(string organizerId=null)
+        public async Task<List<Event>> GetAllEvents(string organizerId=null)
         {
-            var events = eventRepository.GetAllEvents();
+            var events = await eventRepository.GetAllEvents();
             if (organizerId == null)
             {
                 return events;
@@ -70,9 +71,9 @@ namespace BookMyShow.Business
             return organizerEvents;
         }
 
-        public Event GetEvent(int? id, string userId=null)
+        public async Task<Event> GetEvent(int? id, string userId=null)
         {
-            var events = GetAllEvents();
+            var events =await GetAllEvents();
             var eventChoosen = events.FirstOrDefault(e => e.Id == id);
             if (eventChoosen == null)
             {
@@ -82,7 +83,7 @@ namespace BookMyShow.Business
             {
                 return eventChoosen;
             }
-            var users= userRepository.GetAllUsers();
+            var users=await userRepository.GetAllUsers();
             var user = users.FirstOrDefault(u=> u.IdentityUserId==userId);
             if(user == null || user.IdentityUserId !=eventChoosen.UserId)
             {

@@ -1,12 +1,13 @@
 ﻿using BookMyShow.Models;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BookMyShow.Repository.IRepository
 {
     public interface IArtistRepository
     {
-         List<Artist> GetAllArtists();                                                                       
-         void AddArtist(Artist artist);
-         void UpdateArtist(Artist artist);
+         Task<List<Artist>> GetAllArtists();                                                                       
+         Task AddArtist(Artist artist);
+         Task UpdateArtist(Artist artist);
     }
 }

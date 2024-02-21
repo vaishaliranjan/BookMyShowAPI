@@ -1,8 +1,10 @@
 ﻿using BookMyShow.Data;
 using BookMyShow.Models;
 using BookMyShow.Repository.IRepository;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BookMyShow.Repository
 {
@@ -14,23 +16,24 @@ namespace BookMyShow.Repository
             _dbContext = dbContext;
         }
 
-        public List<Venue> GetAllVenues()
+        public async Task<List<Venue>> GetAllVenues()
         {
-            return _dbContext.Venues.ToList();
+            return await _dbContext.Venues.ToListAsync();
         }
 
-        public void AddVenue(Venue venue)
+        public async Task AddVenue(Venue venue)
         {
-            _dbContext.Venues.Add(venue);
-            _dbContext.SaveChanges();
+            await _dbContext.Venues.AddAsync(venue);
+            await _dbContext.SaveChangesAsync();
         }
 
-        public void UpdateVenue(Venue venue)
+        public async Task UpdateVenue(Venue venue)
         {
-            var venueChoosen = _dbContext.Venues.Find(venue.VenueId);
-
-                venueChoosen.IsBooked = venue.IsBooked;
-                _dbContext.SaveChanges();
+            var venueChoosen = await _dbContext.Venues.FirstOrDefaultAsync(v=>v.VenueId==venue.VenueId);
+            venueChoosen.IsBooked = venue.IsBooked;
+            await _dbContext.SaveChangesAsync();
         }
+
+      
     }
 }
