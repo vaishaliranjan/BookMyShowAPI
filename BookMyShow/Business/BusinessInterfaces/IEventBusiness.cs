@@ -11,5 +11,7 @@ namespace BookMyShow.Business.BusinessInterfaces
         public Task CreateEvent(Event e);
         public Task<bool> DeleteEvent(int id, string organizerId=null);
         public Task<bool> DecrementTicket(int id, int numberOfTickets);
+
+        public Task<List<Event>> GetAllEventsByArtistUsername(string artistUsername,string organizerId=null);
     }
 }

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 
-namespace BookMyShow.Controllers
+namespace BookMyShow
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -27,19 +27,19 @@ namespace BookMyShow.Controllers
             {
                 if (id == null)
                 {
-                    var artists = _artistBusiness.GetAllArtists();
+                    var artists =await  _artistBusiness.GetAllArtists();
                     if(artists == null)
                     {
-                        return NotFound("Artists not found!");
+                        return StatusCode(StatusCodes.Status404NotFound, "Artists not found");
                     }
-                    return Ok(artists);
+                    return StatusCode(StatusCodes.Status200OK, artists);
                 }
-                var artist = _artistBusiness.GetArtist(id);
+                var artist =await _artistBusiness.GetArtist(id);
                 if (artist == null)
                 {
-                    return NotFound("Artist not found!");
+                    return StatusCode(StatusCodes.Status404NotFound, "Artist not found");
                 }
-                return Ok(artist);
+                return StatusCode(StatusCodes.Status404NotFound, artist);
             }
             catch (Exception ex)
             {
@@ -53,16 +53,15 @@ namespace BookMyShow.Controllers
         {
             try
             {
-                //custom validation
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
                 }
                 if (await _artistBusiness.CreateArtist(artist))
                 {
-                    return Ok("Artist added successfully");//201
+                    return StatusCode(StatusCodes.Status201Created);
                 }
-                return BadRequest("Invalid DateTime");
+                return StatusCode(StatusCodes.Status400BadRequest, "Invalid DateTime"); 
             }
             catch (Exception ex)
             {

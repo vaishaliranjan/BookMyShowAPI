@@ -4,14 +4,16 @@ using BookMyShow.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BookMyShow.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240321063725_AddedArtistUsername")]
+    partial class AddedArtistUsername
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,9 +82,6 @@ namespace BookMyShow.Migrations
 
                     b.Property<int>("ArtistId")
                         .HasColumnType("int");
-
-                    b.Property<string>("ArtistUsername")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("EventName")
                         .HasColumnType("nvarchar(max)");

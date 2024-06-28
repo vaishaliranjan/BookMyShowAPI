@@ -8,5 +8,7 @@ namespace BookMyShow.Business.BusinessInterfaces
     {
         public Task<List<User>> GetAllOrganizers();
         public Task<User> GetOrganizer(string id);
+        public Task<bool> DeleteOrganizer(string id);
+
     }
 }

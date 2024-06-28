@@ -29,7 +29,7 @@ namespace BookMyShow.Repository
         }
 
         public async Task UpdateArtist(Artist artist)
-        {//variables 
+        {
             var artistChoosen = await _dbContext.Artists.FirstOrDefaultAsync(a=>a.Id==artist.Id);
             artistChoosen.IsBooked = artist.IsBooked;
             await _dbContext.SaveChangesAsync();

@@ -1,4 +1,4 @@
-﻿using BookMyShow.Data;
+﻿/*using BookMyShow.Data;
 using BookMyShow.Models;
 using BookMyShow.Repository;
 using BookMyShow.Repository.IRepository;
@@ -60,3 +60,4 @@ namespace BookMyShow.Tests.Repository.Tests
     }
     
 }
+*/

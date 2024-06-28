@@ -1,13 +1,15 @@
-﻿using BookMyShow.Business.BusinessInterfaces;
+﻿using BookMyShow.Business;
+using BookMyShow.Business.BusinessInterfaces;
 using BookMyShow.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Globalization;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace BookMyShow.Controllers
+namespace BookMyShow
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -32,7 +34,6 @@ namespace BookMyShow.Controllers
         {
             try
             {
-                //var user = user.Identity.GetUserId();-> Doubt to ritika + bookings
                 var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (User.IsInRole("Admin") || User.IsInRole("Customer"))
                 {
@@ -41,18 +42,18 @@ namespace BookMyShow.Controllers
                         var bookings = await _eventBusiness.GetAllEvents();
                         if(bookings == null)
                         {
-                            return NotFound("Bookings not found!");
+                            return StatusCode(StatusCodes.Status404NotFound, "Bookings not found");
                         }
-                        return Ok(bookings);
+                        return StatusCode(StatusCodes.Status200OK, bookings);
                     }
                     else
                     {
                         var eventChoosen = await _eventBusiness.GetEvent(id);
                         if (eventChoosen == null)
                         {
-                            return NotFound("Event not found");
+                            return StatusCode(StatusCodes.Status404NotFound, "Event not found");
                         }
-                        return Ok(eventChoosen);
+                        return StatusCode(StatusCodes.Status200OK, eventChoosen); ;
                     }
                 }
                 else
@@ -62,9 +63,9 @@ namespace BookMyShow.Controllers
                         var bookings =await _eventBusiness.GetAllEvents(currentUserId);
                         if (bookings == null)
                         {
-                            return NotFound("Bookings not found!");
+                            return StatusCode(StatusCodes.Status404NotFound, "Booking not found");
                         }
-                        return Ok(bookings);
+                        return StatusCode(StatusCodes.Status200OK, bookings);
                     }
 
                     else
@@ -72,9 +73,9 @@ namespace BookMyShow.Controllers
                         var eventChoosen = await _eventBusiness.GetEvent(id, currentUserId);
                         if (eventChoosen == null)
                         {
-                            return NotFound("Event not found");
+                            return StatusCode(StatusCodes.Status404NotFound, "Event not found");
                         }
-                        return Ok(eventChoosen);
+                        return StatusCode(StatusCodes.Status200OK, eventChoosen);
                     }
                 }
             }
@@ -83,6 +84,27 @@ namespace BookMyShow.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+
+
+        /* To get events of all particular artist this can be done by admin and organizer*/
+        [HttpGet("~/api/artists/{artistUsername}/events")]
+        [Authorize(Roles = "Admin,Organizer,Customer")]
+
+        public async Task<IActionResult> Get(string artistUsername)
+        {
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (User.IsInRole("Admin") || User.IsInRole("Customer"))
+            {
+                var events = await _eventBusiness.GetAllEventsByArtistUsername(artistUsername);
+                return StatusCode(StatusCodes.Status200OK, events);
+            }
+            else
+            {
+                var events = await _eventBusiness.GetAllEventsByArtistUsername(artistUsername,currentUserId);
+                return StatusCode(StatusCodes.Status200OK, events);
+            }
+        }
+
 
         [HttpPost]
         [Authorize(Roles = "Organizer")]
@@ -97,16 +119,24 @@ namespace BookMyShow.Controllers
                 }
                 var artist = await _artistBusiness.GetArtist(e.ArtistId);
                 var venue = await _venueBusiness.GetVenue(e.VenueId);
+                DateTime artistTime;
+                var isValidDate = DateTime.TryParseExact(artist.Timing, "dd-MM-yyyyTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out artistTime);
+                var today = DateTime.Now;
+                if (!isValidDate || artistTime < today)
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest,"This artist can't be choosen");
+                }
                 e.UserId = currentUserId;
                 if (artist != null && venue != null)
                 {
                     e.InitialTickets = e.NumberOfTickets;
+                    e.ArtistUsername = artist.ArtistUsername;
                     await _eventBusiness.CreateEvent(e);
                     var artistId = e.ArtistId;
                     var venueId = e.VenueId;
                     await _artistBusiness.BookArtist(artistId);
                     await _venueBusiness.BookVenue(venueId);
-                    return Ok("Event added successfully");
+                    return StatusCode(StatusCodes.Status201Created);
                 }
                 return BadRequest("Invalid Request");
             }
@@ -139,9 +169,9 @@ namespace BookMyShow.Controllers
                 {
                     await _artistBusiness.UnBookArtist(e.ArtistId);
                     await _venueBusiness.UnBookVenue(e.VenueId);
-                    return Ok("Event deleted successfully");
+                    return StatusCode(StatusCodes.Status204NoContent);
                 }
-                return NotFound("Event not found or tickets already booked!");
+                return StatusCode(StatusCodes.Status406NotAcceptable, "Tickets already booked"); ;
             }
             catch (Exception ex)
             {

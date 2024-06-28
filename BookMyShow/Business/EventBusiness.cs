@@ -1,6 +1,7 @@
 ﻿using BookMyShow.Business.BusinessInterfaces;
 using BookMyShow.Models;
 using BookMyShow.Repository.IRepository;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -69,6 +70,18 @@ namespace BookMyShow.Business
             }
             var organizerEvents = events.FindAll(b => b.UserId == organizerId).ToList();
             return organizerEvents;
+        }
+
+        public async Task<List<Event>> GetAllEventsByArtistUsername(string artistUsername, string organizerId = null)
+        {
+            var events = await GetAllEvents();
+            var eventsWithArtistUsername = events.Where(e => e.ArtistUsername == artistUsername).ToList();
+            if (organizerId == null)
+            {
+                return eventsWithArtistUsername;
+            }
+            var eventsWithArtistUsernameOfOrganizers = eventsWithArtistUsername.Where(e => e.UserId == organizerId).ToList();
+            return eventsWithArtistUsernameOfOrganizers;
         }
 
         public async Task<Event> GetEvent(int? id, string userId=null)

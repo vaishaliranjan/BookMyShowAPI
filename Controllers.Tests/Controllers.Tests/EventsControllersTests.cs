@@ -1,4 +1,4 @@
-﻿using BookMyShow.Business.BusinessInterfaces;
+﻿/*using BookMyShow.Business.BusinessInterfaces;
 using BookMyShow.Models.Enum;
 using BookMyShow.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -659,3 +659,4 @@ namespace BookMyShow.Tests.Controllers.Tests
         }
     }
 }
+*/

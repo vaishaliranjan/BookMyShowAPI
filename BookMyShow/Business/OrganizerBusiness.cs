@@ -32,6 +32,17 @@ namespace BookMyShow.Business
             var organizers = users.Where(u => u.Role == Role.Organizer).ToList();
             return organizers;
         }
+
+        public async Task<bool> DeleteOrganizer(string id)
+        {
+            var admin = await GetOrganizer(id);
+            if (admin == null)
+            {
+                return false;
+            }
+            await userRepository.RemoveUser(admin);
+            return true;
+        }
     }
 }
 

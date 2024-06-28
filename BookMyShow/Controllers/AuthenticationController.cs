@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 
-namespace BookMyShow.Controllers
+namespace BookMyShow
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
@@ -27,12 +27,12 @@ namespace BookMyShow.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest(ModelState);
+                    return StatusCode(StatusCodes.Status400BadRequest, "Fill the form again!");
                 }
                 var result = await _accountBusiness.AddUser(model);
                 if (result)
                 {
-                    return Ok("Account created successfully.");
+                    return StatusCode(StatusCodes.Status201Created);
                 }
                 return StatusCode(StatusCodes.Status400BadRequest, "User already exists");
             }
@@ -49,12 +49,12 @@ namespace BookMyShow.Controllers
             {
                 if (!ModelState.IsValid)
                 {
-                    return BadRequest(ModelState);
+                    return StatusCode(StatusCodes.Status400BadRequest);
                 }
                 var result = await _accountBusiness.Register(model);
                 if (result)
                 {
-                    return Ok("Account created successfully.");
+                    return StatusCode(StatusCodes.Status201Created);
                 }
                 return StatusCode(StatusCodes.Status400BadRequest, "User already exists");
             }
@@ -75,9 +75,9 @@ namespace BookMyShow.Controllers
                 }
 
                 var result = await _accountBusiness.Login(model);
-                if (result)
+                if (result==1 || result==2|| result==3)
                 {
-                    return Ok("Logged In successfully.");
+                    return StatusCode(StatusCodes.Status200OK, result);
                 }
                 return StatusCode(StatusCodes.Status404NotFound, "User Not Found");
             }
@@ -88,12 +88,13 @@ namespace BookMyShow.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Organizer,Customer")]
         public async Task<IActionResult> Logout()
         {
             try
             {
                 await _accountBusiness.Logout();
-                return Ok("Logged out successfully.");
+                return StatusCode(StatusCodes.Status200OK);
             }
             catch (Exception ex)
             {

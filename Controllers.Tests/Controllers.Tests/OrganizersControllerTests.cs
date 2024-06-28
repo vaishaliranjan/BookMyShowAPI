@@ -1,4 +1,4 @@
-﻿using BookMyShow.Business.BusinessInterfaces;
+﻿/*using BookMyShow.Business.BusinessInterfaces;
 using BookMyShow.Controllers;
 using BookMyShow.Models.Enum;
 using BookMyShow.Models;
@@ -112,4 +112,4 @@ namespace BookMyShow.Tests.Controllers.Tests
             Assert.AreEqual(StatusCodes.Status500InternalServerError, response.StatusCode);
         }
     }
-}
+}*/

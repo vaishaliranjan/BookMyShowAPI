@@ -33,5 +33,18 @@ namespace BookMyShow.Business
             var customers = users.Where(u => u.Role == Role.Customer).ToList();
             return customers;
         }
+
+        public async Task<bool> DeleteCustomer(string id)
+        {
+            var admin = await GetCustomer(id);
+            if (admin == null)
+            {
+                return false;
+            }
+            await userRepository.RemoveUser(admin);
+            return true;
+        }
+
+      
     }
 }

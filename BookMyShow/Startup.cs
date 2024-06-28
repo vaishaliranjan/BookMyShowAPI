@@ -25,18 +25,7 @@ namespace BookMyShow
         {
             Configuration = configuration;
         }
-        //private async Task CreateUserRole(IServiceProvider serviceProvider)
-        //{
-        //    var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-        //    foreach (var roleName in new[] { "Admin", "Organizer", "Customer" })
-        //    {
-        //        if (!await roleManager.RoleExistsAsync(roleName))
-        //        {
-        //            await roleManager.CreateAsync(new IdentityRole { Name = roleName });
-        //        }
-        //    }
-        //}
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -44,7 +33,7 @@ namespace BookMyShow
         {
             services.AddControllers();
             services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
-            services.AddDbContext<AppDbContext>();
+            services.AddDbContext<AppDbContext>((options => options.UseSqlServer(Configuration.GetConnectionString("BookMyShowDbConnection"))));
             services.AddScoped<IAuthenticationBusiness,AuthenticationBusiness>();
             services.AddScoped<IAdminBusiness,AdminBusiness>(); 
             services.AddScoped<IArtistBusiness,ArtistBusiness>();
@@ -68,6 +57,15 @@ namespace BookMyShow
                     Description = "Bookings made easy",
                 });
             });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowOrigin",
+                    builder => builder.WithOrigins("https://localhost:4200")
+                                      .AllowAnyHeader()
+                                      .AllowAnyMethod()
+                                      .AllowCredentials());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -77,6 +75,7 @@ namespace BookMyShow
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseCors("AllowOrigin");
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {

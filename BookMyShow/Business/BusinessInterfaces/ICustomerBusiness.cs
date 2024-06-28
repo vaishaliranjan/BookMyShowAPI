@@ -8,5 +8,6 @@ namespace BookMyShow.Business.BusinessInterfaces
     {
         public Task<List<User>> GetAllCustomers();
         public Task<User> GetCustomer(string id);
+        public Task<bool> DeleteCustomer(string id);
     }
 }

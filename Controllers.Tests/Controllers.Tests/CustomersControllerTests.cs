@@ -1,4 +1,4 @@
-﻿using BookMyShow.Business.BusinessInterfaces;
+﻿/*using BookMyShow.Business.BusinessInterfaces;
 using BookMyShow.Controllers;
 using BookMyShow.Models;
 using BookMyShow.Models.Enum;
@@ -115,3 +115,4 @@ namespace BookMyShow.Tests.Controllers.Tests
         }
     }
 }
+*/

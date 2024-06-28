@@ -5,6 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+	<DotNetCliToolReference Include="Amazon.Lambda.Tools" Version="2.2.0" />
+    <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="3.1.0" />
     <PackageReference Include="coverlet.collector" Version="6.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -17,6 +19,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 

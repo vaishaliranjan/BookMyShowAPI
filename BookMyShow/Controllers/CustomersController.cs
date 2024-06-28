@@ -1,10 +1,12 @@
-﻿using BookMyShow.Business.BusinessInterfaces;
+﻿using BookMyShow.Business;
+using BookMyShow.Business.BusinessInterfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Threading.Tasks;
 
-namespace BookMyShow.Controllers
+namespace BookMyShow
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -19,25 +21,44 @@ namespace BookMyShow.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public IActionResult Get(string id)
+        public async Task<IActionResult> Get(string id)
         {
             try
             {
                 if (id == null)
                 {
-                    var customers = _customerBusiness.GetAllCustomers();
+                    var customers = await _customerBusiness.GetAllCustomers();
                     if(customers == null)
                     {
-                        return NotFound("Customers not found");
+                        return StatusCode(StatusCodes.Status404NotFound, "Customers not found");
                     }
-                    return Ok(customers);
+                    return StatusCode(StatusCodes.Status200OK, customers);
                 }
                 var customer = _customerBusiness.GetCustomer(id);
                 if (customer == null)
                 {
-                    return NotFound("Customer not found!");
+                    return StatusCode(StatusCodes.Status404NotFound, "Customer not found");
                 }
-                return Ok(customer);
+                return StatusCode(StatusCodes.Status200OK,customer);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            try
+            {
+                var result = await _customerBusiness.DeleteCustomer(id);
+                if (result)
+                {
+                    return StatusCode(StatusCodes.Status204NoContent);
+                }
+                return StatusCode(StatusCodes.Status404NotFound, "Customer not found");
             }
             catch (Exception ex)
             {

@@ -1,6 +1,7 @@
 ﻿using BookMyShow.Data;
 using BookMyShow.Models;
 using BookMyShow.Repository.IRepository;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +12,11 @@ namespace BookMyShow.Repository
     public class UserRepository : IUserRepository
     {
         private readonly AppDbContext _dbContext;
-        public UserRepository(AppDbContext dbContext)
+        private readonly UserManager<IdentityUser> _userManager;
+        public UserRepository(AppDbContext dbContext, UserManager<IdentityUser> userManager)
         {
             _dbContext = dbContext;
+            _userManager = userManager;
         }
         public async Task AddUser(User user)
         {
@@ -29,6 +32,8 @@ namespace BookMyShow.Repository
         {
             var userChoosen = await _dbContext.Users.FirstOrDefaultAsync(u=>u.IdentityUserId == user.IdentityUserId);
             _dbContext.Users.Remove(userChoosen);
+            var userToDelete= await _userManager.FindByIdAsync(userChoosen.IdentityUserId);
+            await _userManager.DeleteAsync(userToDelete);
             await _dbContext.SaveChangesAsync();
         }
     }

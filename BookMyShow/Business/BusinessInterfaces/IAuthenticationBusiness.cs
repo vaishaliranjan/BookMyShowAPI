@@ -7,7 +7,7 @@ namespace BookMyShow.Business
     {
         Task<bool> AddUser(AddUserModel model);
         Task<bool> Register(RegisterModel model);
-        Task<bool> Login(LoginModel loginModel);
+        Task<int> Login(LoginModel loginModel);
         Task Logout();
     }
 }

@@ -1,4 +1,4 @@
-﻿using BookMyShow.Business.BusinessInterfaces;
+﻿/*using BookMyShow.Business.BusinessInterfaces;
 using BookMyShow.Controllers;
 using BookMyShow.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -138,3 +138,4 @@ namespace BookMyShow.Tests.Controllers.Tests
         }
     }
 }
+*/

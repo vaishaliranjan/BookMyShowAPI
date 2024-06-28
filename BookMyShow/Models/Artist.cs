@@ -7,6 +7,7 @@ namespace BookMyShow.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string ArtistUsername { get; set; }
         public string Timing { get; set; }
         public bool IsBooked { get; set; }
     }

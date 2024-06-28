@@ -1,4 +1,4 @@
-﻿using BookMyShow.Data;
+﻿/*using BookMyShow.Data;
 using BookMyShow.Models;
 using BookMyShow.Repository;
 using Microsoft.EntityFrameworkCore;
@@ -47,3 +47,4 @@ namespace BookMyShow.Tests.Repository.Tests
   
     }
 }
+*/

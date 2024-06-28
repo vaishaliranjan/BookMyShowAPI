@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 
-namespace BookMyShow.Controllers
+namespace BookMyShow
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -29,14 +29,14 @@ namespace BookMyShow.Controllers
                     var venues = await _venueBusiness.GetAllVenues();
                     if(venues== null)
                     {
-                        return NotFound("Venues not found!");
+                        return StatusCode(StatusCodes.Status404NotFound, "Venues not found");
                     }
-                    return Ok(venues);
+                    return StatusCode(StatusCodes.Status200OK,venues);
                 }
                 var venue = await _venueBusiness.GetVenue(id);
                 if (venue == null)
                 {
-                    return NotFound("Venue not found!");
+                    return StatusCode(StatusCodes.Status404NotFound, "Venue not found");
                 }
                 return Ok(venue);
             }
@@ -57,7 +57,7 @@ namespace BookMyShow.Controllers
                     return BadRequest(ModelState);
                 }
                 await _venueBusiness.CreateVenue(venue);
-                return Ok("Venue added successfully");
+                return StatusCode(StatusCodes.Status200OK);
             }
             catch (Exception ex)
             {

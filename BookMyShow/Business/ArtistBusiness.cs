@@ -19,6 +19,8 @@ namespace BookMyShow.Business
 
         public async Task<bool> CreateArtist(Artist artist)
         {//custom exception -> generic exception-> specific 
+
+         
             DateTime timing;
             var isValidDate = DateTime.TryParseExact(artist.Timing,"dd-MM-yyyyTHH:mm:ss",CultureInfo.InvariantCulture, DateTimeStyles.None, out timing);
             var today= DateTime.Now;
@@ -32,7 +34,18 @@ namespace BookMyShow.Business
 
         public async Task<List<Artist>> GetAllArtists()
         {
-            return await artistRepository.GetAllArtists();
+            var artists= await artistRepository.GetAllArtists();
+            foreach (var artist in artists)
+            {
+                DateTime timing;
+                var isValidDate = DateTime.TryParseExact(artist.Timing, "dd-MM-yyyyTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out timing);
+                var today = DateTime.Now;
+                if (!isValidDate || timing < today)
+                {
+                    artist.IsBooked = true;
+                }
+            }
+            return artists;
         }
 
         public async Task<Artist> GetArtist(int? id)

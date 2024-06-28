@@ -12,6 +12,8 @@ namespace BookMyShow.Models
         public string EventName { get; set; }
         [ForeignKey("Artist")]
         public int ArtistId { get; set; }
+
+        public string ArtistUsername { get; set; }
         [JsonIgnore]
         public Artist Artist { get; set; }
         [ForeignKey("Venue")]

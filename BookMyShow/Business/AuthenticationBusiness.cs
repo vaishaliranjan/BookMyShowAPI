@@ -3,6 +3,8 @@ using BookMyShow.Models.Enum;
 using BookMyShow.Models.ViewsModel;
 using BookMyShow.Repository.IRepository;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Internal;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BookMyShow.Business
@@ -54,7 +56,7 @@ namespace BookMyShow.Business
                     Username = model.Username,
                     Name = model.Name
                 };
-                _userRepository.AddUser(user);
+                await _userRepository.AddUser(user);
                 return true;
 
             }
@@ -78,20 +80,30 @@ namespace BookMyShow.Business
                     Username=model.Username,
                     Name =model.Name
                 }; 
-                _userRepository.AddUser(user);
+                await _userRepository.AddUser(user);
                 return true;
 
             }
             return false;
         }
-       public async Task<bool> Login(LoginModel model)
+       public async Task<int> Login(LoginModel model)
         {
-            var result = await _signInManager.PasswordSignInAsync(model.Username,model.Password, false, false);
-            if(result.Succeeded)
+            var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, false, false);
+
+            if (result.Succeeded)
             {
-                return true;
+                var user = await _userManager.FindByNameAsync(model.Username);
+
+                if (user != null)
+                {
+                    var users = await _userRepository.GetAllUsers();
+                    var userDetail = users.FirstOrDefault(u => u.IdentityUserId == user.Id);
+
+                    return (int)userDetail.Role;
+                }
             }
-            return false;
+
+            return 0;
         }
 
         public async Task Logout()

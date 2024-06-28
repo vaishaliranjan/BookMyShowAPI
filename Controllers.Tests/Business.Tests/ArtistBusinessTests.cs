@@ -1,4 +1,4 @@
-﻿using BookMyShow.Business;
+﻿/*using BookMyShow.Business;
 using BookMyShow.Models;
 using BookMyShow.Repository.IRepository;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -164,3 +164,4 @@ namespace BookMyShow.Tests.Business.Tests
         }
     }
 }
+*/

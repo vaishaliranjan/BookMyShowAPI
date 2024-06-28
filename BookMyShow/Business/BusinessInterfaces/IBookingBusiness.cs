@@ -6,8 +6,9 @@ namespace BookMyShow.Business.BusinessInterfaces
 {
     public interface IBookingBusiness
     {
-        Task<Booking> GetBooking(int? id, string customerId = null);
-        Task<List<Booking>> GetAllBookings(string customerId = null);
+        Task<BookingWithEvent> GetBooking(int? id, string customerId = null);
+        Task<List<BookingWithEvent>> GetAllBookings(string customerId = null);
         Task<bool> CreateBooking(Booking booking, Event e);
+        Task<List<BookingWithEvent>> GetAllBookingsByEventId(int eventId, string organizerId=null);
     }
 }
